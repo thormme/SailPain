@@ -59,6 +59,6 @@
             <Width>640</Width>
             <Height>480</Height>
         </Resolution>
-        <Vertical_Sync>1</Vertical_Sync>
+        <Vertical_Sync>0</Vertical_Sync>
     </Video>
 </Zenilib>
