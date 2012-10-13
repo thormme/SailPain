@@ -5,6 +5,9 @@
 
 PlayState::PlayState() : m_camera(Zeni::Point3f(0,0,100)), m_level("level1") {
     set_pausable(true);
+	m_gameObjects.push_back(new GameObject());
+	m_chronometer.start();
+	m_timePassed = 0.0;
 }
 
 void PlayState::on_push() {
@@ -39,7 +42,12 @@ void PlayState::on_joy_axis(const SDL_JoyAxisEvent &event) {
 }
 
 void PlayState::perform_logic() {
+    const float timePassed = m_chronometer.seconds();
+	const float timeStep = std::min(timePassed - m_timePassed, 50.0f/1000.0f); // Set lower bound on simulation at 20 fps
+    m_timePassed = timePassed;
+
 	Input::stepInput();
+	/////
 	if (Input::isKeyDown(SDLK_LEFT)) {
 		m_camera.turn_left_xy(.05);
 	}
@@ -56,6 +64,17 @@ void PlayState::perform_logic() {
 	Zeni::Collision::Plane pl  = Zeni::Collision::Plane(Zeni::Point3f(100,100,100), Zeni::Vector3f(0, -1, 0));
 
 	Zeni::Collision::Line_Segment sp = Zeni::Collision::Line_Segment(m_camera.position, m_camera.position + Zeni::Vector3f(0,20,0));
+	////
+	// Run physics
+	for (int i=0; i < m_gameObjects.size(); i++) {
+		m_gameObjects[i]->stepPhysics(timeStep);
+	}
+
+	// Handle collisions and perform actions
+	for (int i=0; i < m_gameObjects.size(); i++) {
+		m_gameObjects[i]->handleCollisions();
+		m_gameObjects[i]->act();
+	}
 
 	/*Utils::printDebugMessage(sp.nearest_point(pl).second);
 	Utils::printDebugMessage("\n");*/
@@ -65,4 +84,8 @@ void PlayState::render() {
 	Zeni::get_Video().set_3d(m_camera);
 
 	m_level.render();
+
+	for (int i=0; i < m_gameObjects.size(); i++) {
+		m_gameObjects[i]->render();
+	}
 }

@@ -42,4 +42,9 @@ The following things are unsupported:
     <filepath>textures/dirt.png</filepath>
     <tile>0</tile>
   </dirt>
+  <placeholder>
+    <is_sprite>0</is_sprite>
+    <filepath>textures/placeholder.png</filepath>
+    <tile>0</tile>
+  </placeholder>
 </Textures>

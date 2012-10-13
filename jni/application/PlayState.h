@@ -1,5 +1,6 @@
 #include <zenilib.h>
 #include "Level.h"
+#include "GameObject.h"
 
 class PlayState : public Zeni::Gamestate_Base {
   PlayState(const PlayState &);
@@ -11,6 +12,9 @@ public:
 private:
 	Zeni::Camera m_camera;
 	Level m_level;
+	std::vector<GameObject*> m_gameObjects;
+	Zeni::Chronometer<Zeni::Time> m_chronometer;
+	float m_timePassed;
 
 	void on_push();
 
