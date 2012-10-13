@@ -8,6 +8,8 @@ PlayState::PlayState() : m_camera(Zeni::Point3f(0,0,100)), m_level("level1") {
 	m_gameObjects.push_back(new GameObject());
 	m_chronometer.start();
 	m_timePassed = 0.0;
+	m_camera.tunnel_vision_factor = 1.5f;
+	m_camera.set_fov_deg(80.0f);
 }
 
 void PlayState::on_push() {
@@ -46,6 +48,8 @@ void PlayState::perform_logic() {
 	const float timeStep = std::min(timePassed - m_timePassed, 50.0f/1000.0f); // Set lower bound on simulation at 20 fps
     m_timePassed = timePassed;
 
+	StateModifications stateModifications = StateModifications();
+
 	Input::stepInput();
 	/////
 	if (Input::isKeyDown(SDLK_LEFT)) {
@@ -71,10 +75,13 @@ void PlayState::perform_logic() {
 	}
 
 	// Handle collisions and perform actions
+	std::vector< std::vector<GameObject*> > collisions = getGameObjectCollisions();
 	for (int i=0; i < m_gameObjects.size(); i++) {
-		m_gameObjects[i]->handleCollisions();
-		m_gameObjects[i]->act();
+		m_gameObjects[i]->handleCollisions(collisions[i]);
+		stateModifications.combine(m_gameObjects[i]->act(collisions[i]));
 	}
+
+	applyStateModifications(stateModifications);
 
 	/*Utils::printDebugMessage(sp.nearest_point(pl).second);
 	Utils::printDebugMessage("\n");*/
@@ -82,10 +89,63 @@ void PlayState::perform_logic() {
 
 void PlayState::render() {
 	Zeni::get_Video().set_3d(m_camera);
+	Zeni::Light light = Zeni::Light(Zeni::Color(1.0, 1.0, 1.0, 1.0));
+	light.position = Zeni::Point3f(10, 10, 10);
+	light.set_spot_phi(Utils::PI/6.0);
+	light.set_light_type(Zeni::LIGHT_DIRECTIONAL);
+	Zeni::get_Video().set_lighting(true);
+	Zeni::get_Video().set_Light(0, light);
 
 	m_level.render();
 
 	for (int i=0; i < m_gameObjects.size(); i++) {
 		m_gameObjects[i]->render();
+	}
+
+	Zeni::get_Video().set_lighting(false);
+}
+
+
+const std::vector<std::vector<GameObject*>> PlayState::getGameObjectCollisions() {
+	std::vector<std::vector<GameObject*>> collisions(m_gameObjects.size());
+	for (int i = 0; i < m_gameObjects.size(); i++) {
+		if (m_gameObjects[i]->willDetectCollisionsWithGameObjects()) {
+			for (int j = i + 1; j < m_gameObjects.size(); j++) {
+				if (m_gameObjects[i]->isTouching(m_gameObjects[j])) {
+					collisions[i].push_back(m_gameObjects[j]);
+					if (m_gameObjects[j]->willDetectCollisionsWithGameObjects()) {
+						collisions[j].push_back(m_gameObjects[i]);
+					}
+				}
+			}
+		}
+	}
+	return collisions;
+}
+
+void PlayState::addGameObject(GameObject * object) {
+	m_gameObjects.push_back(object);
+}
+	
+void PlayState::removeGameObject(GameObject * object) {
+	GameObject* removalObject = nullptr;
+	for (std::vector<GameObject*>::iterator it = m_gameObjects.begin(); it != m_gameObjects.end(); it++) {
+		if (*it == object) {
+			GameObject* removalObject = *it;
+			m_gameObjects.erase(it);
+			break;
+		}
+	}
+	if (removalObject != nullptr) {
+		delete removalObject;
+	}
+}
+
+void PlayState::applyStateModifications(StateModifications &stateModifications) {
+	for (std::list<GameObject*>::iterator it = stateModifications.gameObjectAdditions.begin(); it != stateModifications.gameObjectAdditions.end(); it++) {
+		addGameObject(*it);
+	}
+	for (std::list<GameObject*>::iterator it = stateModifications.gameObjectAdditions.begin(); it != stateModifications.gameObjectAdditions.end(); it++) {
+		removeGameObject(*it);
 	}
 }

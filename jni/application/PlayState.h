@@ -29,4 +29,13 @@ private:
 	void perform_logic();
 
 	void render();
+
+
+	const std::vector<std::vector<GameObject*>> getGameObjectCollisions(); ///< Get collisions between bodies, returns vector for each Body
+
+	void addGameObject(GameObject * object); ///< Add an object to the world.
+
+	void removeGameObject(GameObject * object); ///< Remove an object from the world.
+
+	void applyStateModifications(StateModifications &stateModifications);
 };

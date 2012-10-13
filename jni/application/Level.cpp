@@ -35,10 +35,12 @@ Level::Level(std::string fileName) {
 	// Parse points into triangles
 	for (int x=0; x < m_vertices.size() - 1; x++) {
 		for (int y=0; y < m_vertices[x].size() - 1; y++) {
-			Zeni::Vertex3f_Texture ul(m_vertices[x][y].position, Zeni::Point2f(0.0f, 0.0f));
-			Zeni::Vertex3f_Texture ur(m_vertices[x+1][y].position, Zeni::Point2f(1.0f, 0.0f));
-			Zeni::Vertex3f_Texture bl(m_vertices[x][y+1].position, Zeni::Point2f(0.0f, 1.0f));
-			Zeni::Vertex3f_Texture br(m_vertices[x+1][y+1].position, Zeni::Point2f(1.0f, 1.0f));
+			Zeni::Point3f normal = Zeni::Point3f((m_vertices[x][y].position - m_vertices[x+1][y].position)%(m_vertices[x][y].position - m_vertices[x][y+1].position));
+
+			Zeni::Vertex3f_Texture ul(m_vertices[x][y].position, normal, Zeni::Point2f(0.0f, 0.0f));
+			Zeni::Vertex3f_Texture ur(m_vertices[x+1][y].position, normal, Zeni::Point2f(1.0f, 0.0f));
+			Zeni::Vertex3f_Texture bl(m_vertices[x][y+1].position, normal, Zeni::Point2f(0.0f, 1.0f));
+			Zeni::Vertex3f_Texture br(m_vertices[x+1][y+1].position, normal, Zeni::Point2f(1.0f, 1.0f));
 
 			Zeni::Triangle<Zeni::Vertex3f_Texture> * t1 = new Zeni::Triangle<Zeni::Vertex3f_Texture>(ul, bl, ur);
 			Zeni::Triangle<Zeni::Vertex3f_Texture> * t2 = new Zeni::Triangle<Zeni::Vertex3f_Texture>(bl, br, ur);
