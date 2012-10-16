@@ -1,3 +1,5 @@
+#ifndef LEVEL_H
+#define LEVEL_H
 #include <zenilib.h>
 
 class Level {
@@ -33,3 +35,4 @@ public:
 	void render() const;
 
 };
+#endif

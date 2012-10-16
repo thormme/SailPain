@@ -2,14 +2,28 @@
 #include "PlayState.h"
 #include "Input.h"
 #include "Utils.h"
+#include "Viewport.h"
+#include "GameObject.h"
+#include "Level.h"
+#include "lib3ds.h"
 
-PlayState::PlayState() : m_camera(Zeni::Point3f(0,0,100)), m_level("level1") {
+PlayState::PlayState() {
     set_pausable(true);
+	m_level = new Level("level1");
 	m_gameObjects.push_back(new GameObject());
 	m_chronometer.start();
 	m_timePassed = 0.0;
-	m_camera.tunnel_vision_factor = 1.5f;
-	m_camera.set_fov_deg(80.0f);
+	m_viewports.push_back(new Viewport(Zeni::Point2f(0,0), Zeni::Vector2f(1.0, 1.0), Zeni::Camera(Zeni::Point3f(-100, -10, 0))));
+}
+
+PlayState::~PlayState() {
+	for (int i=0; i < m_gameObjects.size(); i++) {
+		delete m_gameObjects[i];
+	}
+	for (int i=0; i < m_viewports.size(); i++) {
+		delete m_viewports[i];
+	}
+	delete m_level;
 }
 
 void PlayState::on_push() {
@@ -51,24 +65,7 @@ void PlayState::perform_logic() {
 	StateModifications stateModifications = StateModifications();
 
 	Input::stepInput();
-	/////
-	if (Input::isKeyDown(SDLK_LEFT)) {
-		m_camera.turn_left_xy(.05);
-	}
-	if (Input::isKeyDown(SDLK_RIGHT)) {
-		m_camera.turn_left_xy(-.05);
-	}
-	if (Input::isKeyDown(SDLK_UP)) {
-		m_camera.move_forward_xy(2.0);
-	}
-	if (Input::isKeyDown(SDLK_DOWN)) {
-		m_camera.move_forward_xy(-2.0);
-	}
 
-	Zeni::Collision::Plane pl  = Zeni::Collision::Plane(Zeni::Point3f(100,100,100), Zeni::Vector3f(0, -1, 0));
-
-	Zeni::Collision::Line_Segment sp = Zeni::Collision::Line_Segment(m_camera.position, m_camera.position + Zeni::Vector3f(0,20,0));
-	////
 	// Run physics
 	for (int i=0; i < m_gameObjects.size(); i++) {
 		m_gameObjects[i]->stepPhysics(timeStep);
@@ -81,28 +78,21 @@ void PlayState::perform_logic() {
 		stateModifications.combine(m_gameObjects[i]->act(collisions[i]));
 	}
 
+	// Adjust viewports
+	for (int i = 0; i < m_viewports.size(); i++) {
+		//m_viewports[i]->stepViewportPosition(timeStep, m_trackedBodies[i]->getPosition());
+	}
+
 	applyStateModifications(stateModifications);
 
-	/*Utils::printDebugMessage(sp.nearest_point(pl).second);
-	Utils::printDebugMessage("\n");*/
+	m_viewports[0]->stepViewportPosition(timeStep, m_gameObjects[0]->getPosition());	
+
 }
 
 void PlayState::render() {
-	Zeni::get_Video().set_3d(m_camera);
-	Zeni::Light light = Zeni::Light(Zeni::Color(1.0, 1.0, 1.0, 1.0));
-	light.position = Zeni::Point3f(10, 10, 10);
-	light.set_spot_phi(Utils::PI/6.0);
-	light.set_light_type(Zeni::LIGHT_DIRECTIONAL);
-	Zeni::get_Video().set_lighting(true);
-	Zeni::get_Video().set_Light(0, light);
-
-	m_level.render();
-
-	for (int i=0; i < m_gameObjects.size(); i++) {
-		m_gameObjects[i]->render();
+	for (std::vector<Viewport*>::iterator it = m_viewports.begin(); it != m_viewports.end(); it++) {			
+		(*it)->render(*m_level, m_gameObjects);
 	}
-
-	Zeni::get_Video().set_lighting(false);
 }
 
 

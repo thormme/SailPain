@@ -1,3 +1,5 @@
+#ifndef GAMEOBJECT_H
+#define GAMEOBJECT_H
 #include <zenilib.h>
 
 class GameObject;
@@ -34,7 +36,7 @@ public:
 		const Zeni::Vector3f &force = Zeni::Vector3f(),
 		const double &mass = 1.0);
 
-	const bool isTouching(GameObject* object) const;
+	const bool isTouching(const GameObject* object) const;
 
 	void stepPhysics(const double timeStep);
 	void handleCollisions(const std::vector<GameObject*> &collisions);
@@ -42,9 +44,22 @@ public:
 
 	void render();
 
-	const Zeni::Point3f getPosition() const;
 	void setPosition(Zeni::Point3f position);
-	const Zeni::Quaternion getOrientation() const;
+	void setVelocity(Zeni::Vector3f velocity);
+	void setForce(Zeni::Vector3f force);
 	void setOrientation(Zeni::Quaternion orientation);
+	void setRollRate(double rate);
+	void setPitchRate(double rate);
+	void setYawRate(double rate);
+
+	const Zeni::Point3f getPosition() const;
+	const Zeni::Vector3f getVelocity() const;
+	const Zeni::Vector3f getForce() const;
+	const Zeni::Quaternion getOrientation() const;
+	const Zeni::Vector3f getForwardVector() const;
+	const double getYawRate() const;
+	const double getPitchRate() const;
+	const double getRollRate() const;
 	const bool willDetectCollisionsWithGameObjects();
 };
+#endif

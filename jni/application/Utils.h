@@ -10,6 +10,9 @@ namespace Utils {
 	const Zeni::Vector2f getVectorFromAngle(const double angle);
 	const double getAngleDifference(const double angle1, const double angle2);
 
+	const bool isPointWithinFace(const Zeni::Point3f &point, const Zeni::Point3f &p1, const Zeni::Point3f &p2, const Zeni::Point3f &p3);
+	const Zeni::Vector3f getSurfaceNormal(const Zeni::Point3f &p1, const Zeni::Point3f &p2, const Zeni::Point3f &p3);
+
 	template <class T>
 	void printDebugMessage(T message) {
 		std::ostringstream str;

@@ -32,3 +32,35 @@ const double Utils::getAngleDifference(const double angle1, const double angle2)
 	}
 	return difference;
 }
+
+const bool Utils::isPointWithinFace(const Zeni::Point3f &point, const Zeni::Point3f &p1, const Zeni::Point3f &p2, const Zeni::Point3f &p3) {
+	Zeni::Vector3f v1 = p3 - p1;
+	Zeni::Vector3f v2 = p2 - p1;
+	Zeni::Vector3f v3 = point - p1;
+
+	double dot11 = v1*v1;
+	double dot12 = v1*v2;
+	double dot13 = v1*v3;
+	double dot22 = v2*v2;
+	double dot23 = v2*v3;
+
+	// Barycentricize!!
+	double invDenom = 1.0/(dot11 * dot22 - dot12 * dot12);
+	double u = (dot22 * dot13 - dot12 * dot23) * invDenom;
+	double v = (dot11 * dot23 - dot12 * dot13) * invDenom;
+
+	if (u >= 0.0f && v >= 0.0f && u + v < 1) {
+		return true;
+	}
+	return false;
+}
+
+const Zeni::Vector3f Utils::getSurfaceNormal(const Zeni::Point3f &p1, const Zeni::Point3f &p2, const Zeni::Point3f &p3) {
+	Zeni::Vector3f v1 = p2 - p1;
+	Zeni::Vector3f v2 = p3 - p2;
+	Zeni::Vector3f normal = Zeni::Vector3f();
+	normal.i = (v1.y * v2.z) - (v1.z * v2.y);
+	normal.j = (v1.z * v2.x) - (v1.x * v2.z);
+	normal.k = (v1.x * v2.y) - (v1.y * v2.x);
+	return normal.normalize();
+}

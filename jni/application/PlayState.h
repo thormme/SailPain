@@ -1,6 +1,9 @@
+#ifndef PLAYSTATE_H
+#define PLAYSTATE_H
 #include <zenilib.h>
 #include "Level.h"
 #include "GameObject.h"
+#include "Viewport.h"
 
 class PlayState : public Zeni::Gamestate_Base {
   PlayState(const PlayState &);
@@ -8,10 +11,11 @@ class PlayState : public Zeni::Gamestate_Base {
 
 public:
   PlayState();
+  ~PlayState();
 
 private:
-	Zeni::Camera m_camera;
-	Level m_level;
+	Level * m_level;
+	std::vector<Viewport*> m_viewports;
 	std::vector<GameObject*> m_gameObjects;
 	Zeni::Chronometer<Zeni::Time> m_chronometer;
 	float m_timePassed;
@@ -39,3 +43,4 @@ private:
 
 	void applyStateModifications(StateModifications &stateModifications);
 };
+#endif
