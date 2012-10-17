@@ -13,7 +13,7 @@ PlayState::PlayState() {
 	m_gameObjects.push_back(new GameObject());
 	m_chronometer.start();
 	m_timePassed = 0.0;
-	m_viewports.push_back(new Viewport(Zeni::Point2f(0,0), Zeni::Vector2f(1.0, 1.0), Zeni::Camera(Zeni::Point3f(-100, -10, 0))));
+	m_viewports.push_back(new Viewport(m_gameObjects[0], Zeni::Point2f(0,0), Zeni::Vector2f(1.0, 1.0), Zeni::Camera(Zeni::Point3f(-100, -10, 0))));
 }
 
 PlayState::~PlayState() {
@@ -80,12 +80,10 @@ void PlayState::perform_logic() {
 
 	// Adjust viewports
 	for (int i = 0; i < m_viewports.size(); i++) {
-		//m_viewports[i]->stepViewportPosition(timeStep, m_trackedBodies[i]->getPosition());
+		m_viewports[i]->stepViewportPosition(timeStep);
 	}
 
 	applyStateModifications(stateModifications);
-
-	m_viewports[0]->stepViewportPosition(timeStep, m_gameObjects[0]->getPosition());	
 
 }
 

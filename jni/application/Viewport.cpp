@@ -1,18 +1,20 @@
 #include <zenilib.h>
 #include "Viewport.h"
 
-Viewport::Viewport(const Zeni::Point2f &viewPosition, 
+Viewport::Viewport(const GameObject * trackedObject,
+			 const Zeni::Point2f &viewPosition, 
 			 const Zeni::Vector2f &viewSize, 
 			 const Zeni::Camera &camera) {
 	m_viewPosition = viewPosition;
 	m_viewSize = viewSize;
 	m_camera = camera;
+	m_trackedObject = trackedObject;
 }
 Viewport::~Viewport(){}
 
-void Viewport::stepViewportPosition(double timeStep, Zeni::Point3f newPosition) {
-	m_camera.position = m_camera.position.interpolate_to(timeStep*5, newPosition);
-	Zeni::Vector3f facingDirection = newPosition - m_camera.position;
+void Viewport::stepViewportPosition(double timeStep) {
+	m_camera.position = m_camera.position.interpolate_to(timeStep*5, m_trackedObject->getPosition());
+	Zeni::Vector3f facingDirection = m_trackedObject->getPosition() - m_camera.position;
 	m_camera.orientation = Zeni::Quaternion(Utils::getAngleFromVector(Zeni::Vector2f(facingDirection.i, facingDirection.j)), 0.0f, 0.0f);
 }
 void Viewport::render(const Level &level, const std::vector<GameObject*> &objects) const {
