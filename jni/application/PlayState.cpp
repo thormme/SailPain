@@ -6,11 +6,13 @@
 #include "GameObject.h"
 #include "Level.h"
 #include "lib3ds.h"
+#include "Sailplane.h"
 
 PlayState::PlayState() {
     set_pausable(true);
 	m_level = new Level("level1");
-	m_gameObjects.push_back(new GameObject());
+	m_gameObjects.push_back(new Sailplane());
+	m_gameObjects.push_back(new GameObject(Zeni::Point3f(100, 100, 0)));
 	m_chronometer.start();
 	m_timePassed = 0.0;
 	m_viewports.push_back(new Viewport(m_gameObjects[0], Zeni::Point2f(0,0), Zeni::Vector2f(1.0, 1.0), Zeni::Camera(Zeni::Point3f(-100, -10, 0))));

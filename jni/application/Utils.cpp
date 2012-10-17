@@ -55,6 +55,12 @@ const bool Utils::isPointWithinFace(const Zeni::Point3f &point, const Zeni::Poin
 	return false;
 }
 
+const Zeni::Point3f Utils::getFaceLineSegmentIntersection(const Zeni::Collision::Line_Segment &lineSegment, const Zeni::Point3f &p1, const Zeni::Point3f &p2, const Zeni::Point3f &p3) {
+	// Interpolate along line segment to the interpolation value returned by the collision
+	Zeni::Collision::Plane facePlane(p1, getSurfaceNormal(p1, p2, p3));
+	return lineSegment.get_end_point_a().interpolate_to(lineSegment.nearest_point(facePlane).second, lineSegment.get_end_point_b());
+}
+
 const Zeni::Vector3f Utils::getSurfaceNormal(const Zeni::Point3f &p1, const Zeni::Point3f &p2, const Zeni::Point3f &p3) {
 	Zeni::Vector3f v1 = p2 - p1;
 	Zeni::Vector3f v2 = p3 - p2;
@@ -63,4 +69,16 @@ const Zeni::Vector3f Utils::getSurfaceNormal(const Zeni::Point3f &p1, const Zeni
 	normal.j = (v1.z * v2.x) - (v1.x * v2.z);
 	normal.k = (v1.x * v2.y) - (v1.y * v2.x);
 	return normal.normalize();
+}
+
+const bool Utils::isPointWithinFace(const Zeni::Point3f &point, const Zeni::Point3f vertices[3]) {
+	return isPointWithinFace(point, vertices[0], vertices[1], vertices[2]);
+}
+
+const Zeni::Vector3f Utils::getSurfaceNormal(const Zeni::Point3f vertices[3]) {
+	return getSurfaceNormal(vertices[0], vertices[1], vertices[2]);
+}
+
+const Zeni::Point3f Utils::getFaceLineSegmentIntersection(const Zeni::Collision::Line_Segment &lineSegment, const Zeni::Point3f vertices[3]) {
+	return getFaceLineSegmentIntersection(lineSegment, vertices[0], vertices[1], vertices[2]);
 }

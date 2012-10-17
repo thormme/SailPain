@@ -11,7 +11,11 @@ namespace Utils {
 	const double getAngleDifference(const double angle1, const double angle2);
 
 	const bool isPointWithinFace(const Zeni::Point3f &point, const Zeni::Point3f &p1, const Zeni::Point3f &p2, const Zeni::Point3f &p3);
+	const bool isPointWithinFace(const Zeni::Point3f &point, const Zeni::Point3f vertices[3]);
+	const Zeni::Point3f getFaceLineSegmentIntersection(const Zeni::Collision::Line_Segment &lineSegment, const Zeni::Point3f &p1, const Zeni::Point3f &p2, const Zeni::Point3f &p3);
+	const Zeni::Point3f getFaceLineSegmentIntersection(const Zeni::Collision::Line_Segment &lineSegment, const Zeni::Point3f vertices[3]);
 	const Zeni::Vector3f getSurfaceNormal(const Zeni::Point3f &p1, const Zeni::Point3f &p2, const Zeni::Point3f &p3);
+	const Zeni::Vector3f getSurfaceNormal(const Zeni::Point3f vertices[3]);
 
 	template <class T>
 	void printDebugMessage(T message) {

@@ -16,22 +16,80 @@ GameObject::GameObject(const Zeni::Point3f &position,
 		m_velocity(velocity),
 		m_force(force),
 		m_mass(mass) {
-	m_collideWithGameObjects = false;
+	m_collideWithGameObjects = true;
 	m_yawRate = 0.0;
 	m_pitchRate = 0.0;
 	m_rollRate = 0.0;
 }
 
-const bool GameObject::isTouching(const GameObject* object) const {
-	Lib3dsFile * file = m_model.get_file();
-
-	for(int i=0; i < file->nmeshes; i++) {
-		for(int j=0; j < file->meshes[i]->nfaces; j++) {
-			Utils::printDebugMessage(file->meshes[i]->faces[j].flags);
-			Utils::printDebugMessage("\n");
+const bool doFacesIntersect(const Zeni::Point3f face1[3], const Zeni::Point3f face2[3]) {
+	for (int i=0; i < 3; i++) {
+		Zeni::Collision::Line_Segment lineSegment(face1[i], face1[(i+1)%3]);
+		Zeni::Point3f intersectionPoint = Utils::getFaceLineSegmentIntersection(lineSegment, face2);
+		if (Utils::isPointWithinFace(intersectionPoint, face2)) {
+			return true;
 		}
 	}
-	return object->isTouching(this);
+	for (int i=0; i < 3; i++) {
+		Zeni::Collision::Line_Segment lineSegment(face2[i], face2[(i+1)%3]);
+		Zeni::Point3f intersectionPoint = Utils::getFaceLineSegmentIntersection(lineSegment, face1);
+		if (Utils::isPointWithinFace(intersectionPoint, face1)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+const bool GameObject::isTouching(GameObject* object) {
+	double boundingRadius = (m_model.get_extents().lower_bound - m_model.get_extents().upper_bound).magnitude() / 2.0;
+	double objectBoundingRadius = (object->m_model.get_extents().lower_bound - object->m_model.get_extents().upper_bound).magnitude() / 2.0;
+	double minimumSeparation = boundingRadius + objectBoundingRadius;
+	if ((getPosition() - object->getPosition()).magnitude() > minimumSeparation) {
+		return false;
+	}
+
+	Lib3dsFile * file = m_model.get_file();
+	Lib3dsFile * objectFile = object->m_model.get_file();
+
+	// Get vertices for object model
+	std::vector< std::vector<Zeni::Point3f> > objectMeshes;
+	objectMeshes.reserve(objectFile->nmeshes);
+	for (int i=0; i < objectFile->nmeshes; i++) {
+		std::vector<Zeni::Point3f> vertices;
+		vertices.reserve(objectFile->meshes[i]->nvertices);
+
+		for (int j=0; j < objectFile->meshes[i]->nvertices; j++) {
+			Zeni::Vector3f vertex(objectFile->meshes[i]->vertices[j][0], objectFile->meshes[i]->vertices[j][1], objectFile->meshes[i]->vertices[j][2]);
+			vertices.push_back((Zeni::Quaternion::Axis_Angle(object->m_model.get_rotate().first, object->m_model.get_rotate().second) * (vertex.multiply_by(object->m_model.get_scale()))) + Zeni::Vector3f(object->m_model.get_translate()));
+		}
+
+		objectMeshes.push_back(vertices);
+	}
+
+	for (int i=0; i < file->nmeshes; i++) {
+		std::vector<Zeni::Point3f> vertices;
+		vertices.reserve(file->meshes[i]->nvertices);
+
+		for (int j=0; j < file->meshes[i]->nvertices; j++) {
+			Zeni::Vector3f vertex(file->meshes[i]->vertices[j][0], file->meshes[i]->vertices[j][1], file->meshes[i]->vertices[j][2]);
+			vertices.push_back((Zeni::Quaternion::Axis_Angle(m_model.get_rotate().first, m_model.get_rotate().second) * (vertex.multiply_by(m_model.get_scale()))) + Zeni::Vector3f(m_model.get_translate()));
+		}
+
+		for (int j=0; j < file->meshes[i]->nfaces; j++) {
+			Zeni::Point3f face1[] = { vertices[file->meshes[i]->faces[j].index[0]],	vertices[file->meshes[i]->faces[j].index[1]], vertices[file->meshes[i]->faces[j].index[2]] };
+			for (int k = 0; k < objectFile->nmeshes; k++) {
+				for (int l=0; l < objectFile->meshes[i]->nfaces; l++) {
+					Zeni::Point3f face2[] = { objectMeshes[i][file->meshes[i]->faces[j].index[0]],
+											  objectMeshes[i][file->meshes[i]->faces[j].index[1]],
+											  objectMeshes[i][file->meshes[i]->faces[j].index[2]] };
+					if (doFacesIntersect(face1, face2)) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 
 void GameObject::stepPhysics(const double timeStep) {
@@ -42,32 +100,14 @@ void GameObject::stepPhysics(const double timeStep) {
 }
 
 void GameObject::handleCollisions(const std::vector<GameObject*> &collisions) {
-
+	
 }
 
 const StateModifications GameObject::act(const std::vector<GameObject*> &collisions) {
-	setYawRate(0.0);
-	setPitchRate(0.0);
-	setRollRate(0.0);
-	setForce(Zeni::Vector3f());
-	if (Input::isKeyDown(SDLK_LEFT)) {
-		setYawRate(Utils::PI/2.0);
-	}
-	if (Input::isKeyDown(SDLK_RIGHT)) {
-		setYawRate(-Utils::PI/2.0);
-	}
-	if (Input::isKeyDown(SDLK_UP)) {
-		setForce(getForwardVector()*10);
-	}
-	if (Input::isKeyDown(SDLK_DOWN)) {
-		setForce(getForwardVector()*10);
-	}
 	return StateModifications();
 }
 
 void GameObject::render() {
-	m_model.set_translate(m_position);
-	m_model.set_rotate(m_orientation);
 	m_model.render();
 }
 
@@ -131,6 +171,10 @@ const double GameObject::getRollRate() const {
 
 void GameObject::setRollRate(double rate) {
 	m_rollRate = rate;
+}
+
+void GameObject::detectCollisionsWithGameObjects(bool collide) {
+	m_collideWithGameObjects = collide;
 }
 
 const bool GameObject::willDetectCollisionsWithGameObjects() {
