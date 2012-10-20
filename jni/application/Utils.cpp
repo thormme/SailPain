@@ -33,6 +33,18 @@ const double Utils::getAngleDifference(const double angle1, const double angle2)
 	return difference;
 }
 
+const Zeni::Vector3f Utils::getVectorComponent(const Zeni::Vector3f &vector, const Zeni::Vector3f &direction) {
+	return vector*direction/direction.magnitude() * direction.normalized();
+}
+
+const double Utils::getQuaternionPitch(const Zeni::Quaternion orientation) {
+	double x = orientation[1];
+	double y = orientation[2];
+	double z = orientation[3];
+	double w = orientation[0];
+	return asin(2.0*x*y + 2.0*z*w);
+}
+
 const bool Utils::isPointWithinFace(const Zeni::Point3f &point, const Zeni::Point3f &p1, const Zeni::Point3f &p2, const Zeni::Point3f &p3) {
 	Zeni::Vector3f v1 = p3 - p1;
 	Zeni::Vector3f v2 = p2 - p1;

@@ -16,7 +16,7 @@ GameObject::GameObject(const Zeni::Point3f &position,
 		m_velocity(velocity),
 		m_force(force),
 		m_mass(mass) {
-	m_collideWithGameObjects = true;
+	m_collideWithGameObjects = false;
 	m_yawRate = 0.0;
 	m_pitchRate = 0.0;
 	m_rollRate = 0.0;

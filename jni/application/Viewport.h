@@ -18,7 +18,7 @@ public:
 	Viewport(const GameObject * trackedObject,
 			 const Zeni::Point2f &viewPosition = Zeni::Point2f(), 
 			 const Zeni::Vector2f &viewSize = Zeni::Vector2f(1.0f, 1.0f), 
-			 const Zeni::Camera &camera = Zeni::Camera(Zeni::Point3f(0.0f, 0.0f, 0.0f), Zeni::Quaternion(), 10.0f, 1000.0f, Utils::PI*2.25f, 1.5f));
+			 const Zeni::Camera &camera = Zeni::Camera(Zeni::Point3f(0.0f, 0.0f, 0.0f), Zeni::Quaternion(), 10.0f, 1000.0f, Utils::PI*2.25f, 1.0f));
 
 	virtual ~Viewport();
 
