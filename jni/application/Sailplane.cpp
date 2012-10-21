@@ -21,26 +21,34 @@ const Zeni::Vector3f Sailplane::getNonLateralVelocity() const {
 }
 
 const Zeni::Vector3f Sailplane::getDrag() const {
-	double baseDrag = 0.01812;
+	/*double baseDrag = 0.01812;
 	double liftCoefficient = abs(getLiftCoefficient());
 	double efficiency = 1.0;
 	double wingArea = m_wingspan * m_wingdepth;
 	double dragCoefficient = baseDrag + liftCoefficient*liftCoefficient / ( Utils::PI * m_wingspan*m_wingspan/wingArea * efficiency);
 	Zeni::Vector3f velocity = getNonLateralVelocity();
 	double drag = dragCoefficient * m_airDensity * velocity.magnitude2() * 0.5 * wingArea;
-	return -velocity.normalized()*drag;
+	//return -velocity.normalized()*drag;
+	return Zeni::Vector3f();*/
+	Zeni::Quaternion up = getOrientation() * Zeni::Quaternion(0.0, Utils::PI/2.0, 00.0);
+	Zeni::Vector3f upVector = (up*Zeni::Vector3f(1.0f, 0.0f, 0.0f)).normalize();
+	Zeni::Vector3f velocity = Utils::getVectorComponent(getVelocity(), upVector);
+
+	return -velocity;
 }
 
 const Zeni::Vector3f Sailplane::getLift() const {
-	Zeni::Quaternion up = getOrientation() * Zeni::Quaternion(0.0, Utils::PI/2.0, 0.0);
-	Zeni::Vector3f upVector = (up*Zeni::Vector3f(1.0f, 0.0f, 0.0f)).normalize();
 
 	// get non-lateral velocity
 	Zeni::Vector3f velocity = getNonLateralVelocity();
+	//Zeni::Vector3f upVector = (Zeni::Quaternion(0.0, Utils::PI/2.0, 0.0) * velocity).normalize();
+	Zeni::Quaternion up = getOrientation() * Zeni::Quaternion(0.0, Utils::PI/2.0, 00.0);
+	Zeni::Vector3f upVector = (up*Zeni::Vector3f(1.0f, 0.0f, 0.0f)).normalize();
 
-	double lift = 0.5 * m_airDensity * velocity.magnitude2() * m_wingspan * m_wingdepth * getLiftCoefficient();
+	//double lift = 0.5 * m_airDensity * velocity.magnitude2() * m_wingspan * m_wingdepth * getLiftCoefficient();
+	double lift = getLiftCoefficient() * Utils::getVectorComponent(getVelocity(), getForwardVector()).magnitude2();
 
-	return upVector * lift;
+	return upVector * lift *.0001;
 }
 
 const double Sailplane::getLiftCoefficient() const {
@@ -70,9 +78,9 @@ void Sailplane::stepPhysics(const double timeStep) {
 	setYawRate(getYawRate()*pow(0.5, timeStep/halfLife));
 	setPitchRate(getPitchRate()*pow(0.5, timeStep/halfLife));
 	setRollRate(getRollRate()*pow(0.5, timeStep/halfLife));
-	Zeni::Vector3f drag = getDrag();
-	double mag = drag.magnitude();
-	setForce(getForce() + getDrag()*.1 + getLift()*.1 + Zeni::Vector3f(0.0, 0.0, -10.0));
+	setForce(getForce() + getDrag() + getLift()*-1.0 + Zeni::Vector3f(0.0, 0.0, -10.0));
+	Utils::printDebugMessage(getLift().magnitude());
+	Utils::printDebugMessage("\n");
 	GameObject::stepPhysics(timeStep);
 }
 
