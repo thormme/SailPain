@@ -180,7 +180,14 @@ namespace Zeni {
     const float b = rhs.magnitude();
     const float c = (rhs - *this).magnitude();
 
-    return float(acos((a * a + b * b - c * c) / (2 * a * b)));
+	float d = (a * a + b * b - c * c) / (2 * a * b);
+	if (d > 1) {
+		d = 1.0f;
+	} else if (d < -1.0f) {
+		d = -1.0f;
+	}
+
+    return float(acos(d));
   }
   
   const float & Vector3f::operator[](const int &index) const {

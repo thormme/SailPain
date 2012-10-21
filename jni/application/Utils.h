@@ -10,7 +10,7 @@ namespace Utils {
 	const Zeni::Vector2f getVectorFromAngle(const double angle);
 	const double getAngleDifference(const double angle1, const double angle2);
 	const Zeni::Vector3f getVectorComponent(const Zeni::Vector3f &vector, const Zeni::Vector3f &direction);
-	const double getQuaternionPitch(const Zeni::Quaternion orientation);
+	const double getAngleBetweenVectors(const Zeni::Vector3f &v0, const Zeni::Vector3f &v1);
 
 	const bool isPointWithinFace(const Zeni::Point3f &point, const Zeni::Point3f &p1, const Zeni::Point3f &p2, const Zeni::Point3f &p3);
 	const bool isPointWithinFace(const Zeni::Point3f &point, const Zeni::Point3f vertices[3]);

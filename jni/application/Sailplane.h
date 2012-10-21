@@ -8,6 +8,9 @@ private:
 	double m_wingspan;
 	double m_wingdepth;
 
+	double m_airDensity;
+
+	const Zeni::Vector3f getNonLateralVelocity() const;
 	const Zeni::Vector3f getLift() const;
 	const Zeni::Vector3f getDrag() const;
 	const double getLiftCoefficient() const;

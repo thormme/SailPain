@@ -15,7 +15,7 @@ Viewport::~Viewport(){}
 void Viewport::stepViewportPosition(double timeStep) {
 	Zeni::Vector3f facingDirection = m_trackedObject->getVelocity().normalized();
 	m_camera.position = m_trackedObject->getPosition() - facingDirection * 200.0f;
-	double pitch = facingDirection.angle_between(facingDirection.get_ij());
+	double pitch = Utils::getAngleBetweenVectors(facingDirection, facingDirection.get_ij());
 	if (facingDirection.k > 0.0) {
 		pitch *= -1.0;
 	}
