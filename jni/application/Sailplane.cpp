@@ -42,7 +42,7 @@ const Zeni::Vector3f Sailplane::getLift() const {
 	// get non-lateral velocity
 	Zeni::Vector3f velocity = getNonLateralVelocity();
 	//Zeni::Vector3f upVector = (Zeni::Quaternion(0.0, Utils::PI/2.0, 0.0) * velocity).normalize();
-	Zeni::Quaternion up = getOrientation() * Zeni::Quaternion(0.0, Utils::PI/2.0, 00.0);
+	Zeni::Quaternion up = getOrientation() * Zeni::Quaternion(0.0, -Utils::PI/2.0, 00.0);
 	Zeni::Vector3f upVector = (up*Zeni::Vector3f(1.0f, 0.0f, 0.0f)).normalize();
 
 	//double lift = 0.5 * m_airDensity * velocity.magnitude2() * m_wingspan * m_wingdepth * getLiftCoefficient();
@@ -78,7 +78,7 @@ void Sailplane::stepPhysics(const double timeStep) {
 	setYawRate(getYawRate()*pow(0.5, timeStep/halfLife));
 	setPitchRate(getPitchRate()*pow(0.5, timeStep/halfLife));
 	setRollRate(getRollRate()*pow(0.5, timeStep/halfLife));
-	setForce(getForce() + getDrag() + getLift()*-1.0 + Zeni::Vector3f(0.0, 0.0, -10.0));
+	setForce(getForce() + getDrag() + getLift() + Zeni::Vector3f(0.0, 0.0, -10.0));
 	Utils::printDebugMessage(getLift().magnitude());
 	Utils::printDebugMessage("\n");
 	GameObject::stepPhysics(timeStep);
