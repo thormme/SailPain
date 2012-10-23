@@ -31,9 +31,14 @@ const Zeni::Vector3f Sailplane::getDrag() const {
 	double drag = dragCoefficient * m_airDensity * velocity.magnitude2() * 0.5 * wingArea;
 	//return -velocity.normalized()*drag;
 	return Zeni::Vector3f();*/
-	Zeni::Quaternion up = getOrientation() * Zeni::Quaternion(0.0, Utils::PI/2.0, 00.0);
-	Zeni::Vector3f upVector = (up*Zeni::Vector3f(1.0f, 0.0f, 0.0f)).normalize();
-	Zeni::Vector3f velocity = Utils::getVectorComponent(getVelocity(), upVector);
+	Zeni::Vector3f forwardVector = getForwardVector();
+	Zeni::Vector3f nonForwardVelocity = getVelocity() - Utils::getVectorComponent(getVelocity(), forwardVector);
+
+	Zeni::Quaternion left = getOrientation() * Zeni::Quaternion(Utils::PI/2.0, 0.0, 00.0);
+	Zeni::Vector3f leftVector = (left*Zeni::Vector3f(1.0f, 0.0f, 0.0f)).normalize();
+	Zeni::Vector3f nonForwardSideVelocity = Utils::getVectorComponent(nonForwardVelocity, leftVector);
+
+	Zeni::Vector3f velocity = nonForwardVelocity - nonForwardSideVelocity + nonForwardSideVelocity*2.0;
 
 	return -velocity;
 }
