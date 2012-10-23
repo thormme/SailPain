@@ -1,5 +1,6 @@
 #include <zenilib.h>
 #include "Level.h"
+#include "Utils.h"
 
 double getHeightFromColor(Uint32 color) {
 	return (double)(color & 0x000000FF)/256.0;
@@ -35,7 +36,7 @@ Level::Level(std::string fileName) {
 	// Parse points into triangles
 	for (int x=0; x < m_vertices.size() - 1; x++) {
 		for (int y=0; y < m_vertices[x].size() - 1; y++) {
-			Zeni::Point3f normal = Zeni::Point3f((m_vertices[x][y].position - m_vertices[x+1][y].position)%(m_vertices[x][y].position - m_vertices[x][y+1].position));
+			Zeni::Point3f normal = Utils::getSurfaceNormal(m_vertices[x][y].position, m_vertices[x+1][y].position, m_vertices[x][y+1].position);
 
 			Zeni::Vertex3f_Texture ul(m_vertices[x][y].position, normal, Zeni::Point2f(0.0f, 0.0f));
 			Zeni::Vertex3f_Texture ur(m_vertices[x+1][y].position, normal, Zeni::Point2f(1.0f, 0.0f));

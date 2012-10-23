@@ -11,7 +11,7 @@
 PlayState::PlayState() {
     set_pausable(true);
 	m_level = new Level("level1");
-	m_gameObjects.push_back(new Sailplane());
+	m_gameObjects.push_back(new Sailplane(Zeni::Point3f(0.0, 0.0, 100.0)));
 	m_gameObjects.push_back(new GameObject(Zeni::Point3f(100, 100, 0)));
 	m_chronometer.start();
 	m_timePassed = 0.0;

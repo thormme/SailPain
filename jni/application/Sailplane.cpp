@@ -8,7 +8,8 @@ Sailplane::Sailplane(const Zeni::Point3f &position,
 		const Zeni::Model &model,
 		const Zeni::Vector3f &velocity,
 		const Zeni::Vector3f &force,
-		const double &mass) : GameObject(position, orientation, model, velocity, force, mass) {
+		const double mass,
+		const double scale) : GameObject(position, orientation, model, velocity, force, mass, scale) {
 	m_wingspan = 15.0;
 	m_wingdepth = 2.0;
 	m_airDensity = 1.0;
@@ -48,7 +49,7 @@ const Zeni::Vector3f Sailplane::getLift() const {
 	//double lift = 0.5 * m_airDensity * velocity.magnitude2() * m_wingspan * m_wingdepth * getLiftCoefficient();
 	double lift = getLiftCoefficient() * Utils::getVectorComponent(getVelocity(), getForwardVector()).magnitude2();
 
-	return upVector * lift *.0001;
+	return upVector * lift *.1;
 }
 
 const double Sailplane::getLiftCoefficient() const {
@@ -78,7 +79,7 @@ void Sailplane::stepPhysics(const double timeStep) {
 	setYawRate(getYawRate()*pow(0.5, timeStep/halfLife));
 	setPitchRate(getPitchRate()*pow(0.5, timeStep/halfLife));
 	setRollRate(getRollRate()*pow(0.5, timeStep/halfLife));
-	setForce(getForce() + getDrag() + getLift() + Zeni::Vector3f(0.0, 0.0, -10.0));
+	setForce(getForce() + getDrag() + getLift() + Zeni::Vector3f(0.0, 0.0, -10.0) * getMass());
 	Utils::printDebugMessage(getLift().magnitude());
 	Utils::printDebugMessage("\n");
 	GameObject::stepPhysics(timeStep);
@@ -99,10 +100,10 @@ const StateModifications Sailplane::act(const std::vector<GameObject*> &collisio
 		setYawRate(-Utils::PI/2.0);
 	}
 	if (Input::isKeyDown(SDLK_UP)) {
-		setForce(getForwardVector()*10);
+		setForce(getForwardVector()*100);
 	}
 	if (Input::isKeyDown(SDLK_DOWN)) {
-		setForce(-getForwardVector()*10);
+		setForce(-getForwardVector()*100);
 	}
 	if (Input::isKeyDown(SDLK_a)) {
 		setRollRate(-Utils::PI/2.0);

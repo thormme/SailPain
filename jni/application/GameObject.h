@@ -22,6 +22,7 @@ private:
 	Zeni::Vector3f m_velocity;
 	Zeni::Vector3f m_force;
 	double m_mass;
+	double m_scale;
 	double m_yawRate;
 	double m_pitchRate;
 	double m_rollRate;
@@ -37,7 +38,8 @@ public:
 		const Zeni::Model &model = Zeni::Model("models/placeholder.3ds"),
 		const Zeni::Vector3f &velocity = Zeni::Vector3f(),
 		const Zeni::Vector3f &force = Zeni::Vector3f(),
-		const double &mass = 1.0);
+		const double mass = 1.0,
+		const double scale = 1.0);
 
 	const bool isTouching(GameObject* object);
 
@@ -63,6 +65,7 @@ public:
 	const double getYawRate() const;
 	const double getPitchRate() const;
 	const double getRollRate() const;
+	const double getMass() const;
 	const bool willDetectCollisionsWithGameObjects();
 };
 #endif

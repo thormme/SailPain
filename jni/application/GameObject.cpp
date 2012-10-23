@@ -9,17 +9,20 @@ GameObject::GameObject(const Zeni::Point3f &position,
 		const Zeni::Model &model,
 		const Zeni::Vector3f &velocity,
 		const Zeni::Vector3f &force,
-		const double &mass)
+		const double mass,
+		const double scale)
 		: m_position(position),
 		m_orientation(orientation),
 		m_model(model),
 		m_velocity(velocity),
 		m_force(force),
-		m_mass(mass) {
+		m_mass(mass),
+		m_scale(scale) {
 	m_collideWithGameObjects = false;
 	m_yawRate = 0.0;
 	m_pitchRate = 0.0;
 	m_rollRate = 0.0;
+	m_model.set_scale(Zeni::Vector3f(m_scale, m_scale, m_scale));
 }
 
 const bool doFacesIntersect(const Zeni::Point3f face1[3], const Zeni::Point3f face2[3]) {
@@ -171,6 +174,10 @@ const double GameObject::getRollRate() const {
 
 void GameObject::setRollRate(double rate) {
 	m_rollRate = rate;
+}
+
+const double GameObject::getMass() const {
+	return m_mass;
 }
 
 void GameObject::detectCollisionsWithGameObjects(bool collide) {
