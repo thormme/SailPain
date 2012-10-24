@@ -114,6 +114,8 @@ const StateModifications GameObject::act(const std::vector<GameObject*> &collisi
 }
 
 void GameObject::render() {
+	m_model.set_translate(m_position);
+	m_model.set_rotate(m_orientation);
 	m_model.render();
 }
 
@@ -123,7 +125,6 @@ const Zeni::Point3f GameObject::getPosition() const {
 
 void GameObject::setPosition(Zeni::Point3f position) {
 	m_position = position;
-	m_model.set_translate(m_position);
 }
 
 const Zeni::Vector3f GameObject::getVelocity() const {
@@ -152,7 +153,6 @@ const Zeni::Vector3f GameObject::getForwardVector() const {
 
 void GameObject::setOrientation(Zeni::Quaternion orientation) {
 	m_orientation = orientation;
-	m_model.set_rotate(m_orientation);
 }
 
 const double GameObject::getYawRate() const {

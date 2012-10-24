@@ -29,7 +29,7 @@ void Viewport::render(const Level &level, const std::vector<GameObject*> &object
 
 	Zeni::Light light = Zeni::Light(Zeni::Color(0.0, 0.3, 0.3, 0.3), Zeni::Color(0.0, 0.3, 0.3, 0.3));
 	light.position = Zeni::Point3f(10, 10, 10);
-	light.set_spot_phi(Utils::PI/6.0);
+	light.set_spot_phi(Utils::PI*1.5);
 	light.set_light_type(Zeni::LIGHT_DIRECTIONAL);
 	vr.set_lighting(true);
 	vr.set_ambient_lighting(Zeni::Color(0.0f, 0.0f, 0.0f, 0.0f));

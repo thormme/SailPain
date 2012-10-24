@@ -63,3 +63,21 @@ void Level::render() const {
 		Zeni::get_Video().unapply_Texture();
 	}
 }
+
+const Zeni::Point3f Level::getPositionAtPoint(Zeni::Point2f point) const {
+	if (point.y < 0 || (int)(point.y/m_vertexSeparation.j) >= m_vertices.size()) {
+		return Zeni::Point3f(point.x, point.y, 0.0f);
+	}
+	if (point.x < 0 || (int)(point.x/m_vertexSeparation.i) >= m_vertices[(int)point.x].size()) {
+		return Zeni::Point3f(point.x, point.y, 0.0f);
+	}
+	return m_vertices[(int)point.x][(int)point.y].position;
+}
+
+const Zeni::Vector3f Level::getBounds() const {
+	if (m_vertices.size() &&  m_vertices[0].size()) {
+		return Zeni::Vector3f(m_vertices[0].size(), m_vertices.size(), m_maxHeight);
+	} else {
+		return Zeni::Vector3f();
+	}
+}

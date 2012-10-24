@@ -13,7 +13,11 @@ PlayState::PlayState() {
     set_pausable(true);
 	m_level = new Level("level1");
 	m_gameObjects.push_back(new Sailplane(Zeni::Point3f(0.0, 0.0, 100.0)));
-	m_gameObjects.push_back(new Building(Zeni::Point3f(100, 100, 0)));
+
+	for (int i=0; i < 10; i++) {
+		m_gameObjects.push_back(new Building(m_level->getPositionAtPoint(Zeni::Vector2f(m_level->getBounds().get_ij()).multiply_by(Zeni::Vector2f((float)(rand()%1000)/1000.0f, (float)(rand()%1000)/1000.0f)))));
+	}
+
 	m_chronometer.start();
 	m_timePassed = 0.0;
 	m_viewports.push_back(new Viewport(m_gameObjects[0], Zeni::Point2f(0,0), Zeni::Vector2f(1.0, 1.0), Zeni::Camera(Zeni::Point3f(-100, -10, 0))));
@@ -91,6 +95,7 @@ void PlayState::perform_logic() {
 }
 
 void PlayState::render() {
+	Zeni::get_Video().set_clear_Color(Zeni::Color(0xFF7777FF));
 	for (std::vector<Viewport*>::iterator it = m_viewports.begin(); it != m_viewports.end(); it++) {			
 		(*it)->render(*m_level, m_gameObjects);
 	}

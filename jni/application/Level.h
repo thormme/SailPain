@@ -34,5 +34,8 @@ public:
 
 	void render() const;
 
+	const Zeni::Point3f Level::getPositionAtPoint(Zeni::Point2f point) const;
+	const Zeni::Vector3f getBounds() const;
+
 };
 #endif
