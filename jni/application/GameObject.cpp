@@ -7,6 +7,7 @@
 GameObject::GameObject(const Zeni::Point3f &position,
 		const Zeni::Quaternion &orientation,
 		const Zeni::Model &model,
+		const CollisionGeometry &collisionGeometry,
 		const Zeni::Vector3f &velocity,
 		const Zeni::Vector3f &force,
 		const double mass,
@@ -14,15 +15,16 @@ GameObject::GameObject(const Zeni::Point3f &position,
 		: m_position(position),
 		m_orientation(orientation),
 		m_model(model),
+		m_collisionGeometry(collisionGeometry),
 		m_velocity(velocity),
 		m_force(force),
 		m_mass(mass),
-		m_scale(scale) {
+		m_scale(Zeni::Vector3f(scale, scale, scale)) {
 	m_collideWithGameObjects = false;
 	m_yawRate = 0.0;
 	m_pitchRate = 0.0;
 	m_rollRate = 0.0;
-	m_model.set_scale(Zeni::Vector3f(m_scale, m_scale, m_scale));
+	m_model.set_scale(m_scale);
 }
 
 const bool doFacesIntersect(const Zeni::Point3f face1[3], const Zeni::Point3f face2[3]) {
@@ -51,7 +53,7 @@ const bool GameObject::isTouching(GameObject* object) {
 		return false;
 	}
 
-	Lib3dsFile * file = m_model.get_file();
+	/*Lib3dsFile * file = m_model.get_file();
 	Lib3dsFile * objectFile = object->m_model.get_file();
 
 	// Get vertices for object model
@@ -92,7 +94,8 @@ const bool GameObject::isTouching(GameObject* object) {
 			}
 		}
 	}
-	return false;
+	return false;*/
+	return m_collisionGeometry.isTouching(object->m_collisionGeometry, m_position, object->m_position, m_orientation, object->m_orientation, m_scale, object->m_scale);
 }
 
 void GameObject::stepPhysics(const double timeStep) {
@@ -180,10 +183,18 @@ const double GameObject::getMass() const {
 	return m_mass;
 }
 
-void GameObject::detectCollisionsWithGameObjects(bool collide) {
+void GameObject::collideWithGameObjects(bool collide) {
 	m_collideWithGameObjects = collide;
 }
 
-const bool GameObject::willDetectCollisionsWithGameObjects() {
+const bool GameObject::willCollideWithGameObjects() const {
 	return m_collideWithGameObjects;
+}
+
+void GameObject::detectCollisionsWithGameObjects(bool detect) {
+	m_detectCollisionsWithGameObjects = detect;
+}
+
+const bool GameObject::willDetectCollisionsWithGameObjects() const {
+	return m_detectCollisionsWithGameObjects;
 }

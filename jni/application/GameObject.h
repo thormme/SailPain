@@ -1,6 +1,7 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 #include <zenilib.h>
+#include "CollisionGeometry.h"
 
 class GameObject;
 
@@ -17,25 +18,29 @@ struct StateModifications {
 class GameObject {
 private:
 	Zeni::Model m_model;
+	CollisionGeometry m_collisionGeometry;
 
 	Zeni::Point3f m_position;
 	Zeni::Vector3f m_velocity;
 	Zeni::Vector3f m_force;
 	double m_mass;
-	double m_scale;
+	Zeni::Vector3f m_scale;
 	double m_yawRate;
 	double m_pitchRate;
 	double m_rollRate;
 	Zeni::Quaternion m_orientation;
 	bool m_collideWithGameObjects;
+	bool m_detectCollisionsWithGameObjects;
 
 protected:
-	void detectCollisionsWithGameObjects(bool collide = true);
+	void detectCollisionsWithGameObjects(bool detect = true);
+	void collideWithGameObjects(bool collide = true);
 
 public:
 	GameObject(const Zeni::Point3f &position = Zeni::Point3f(),
 		const Zeni::Quaternion &orientation = Zeni::Quaternion(),
 		const Zeni::Model &model = Zeni::Model("models/placeholder.3ds"),
+		const CollisionGeometry &collisionGeometry = CollisionGeometry("models/placeholder.col"),
 		const Zeni::Vector3f &velocity = Zeni::Vector3f(),
 		const Zeni::Vector3f &force = Zeni::Vector3f(),
 		const double mass = 1.0,
@@ -66,6 +71,7 @@ public:
 	const double getPitchRate() const;
 	const double getRollRate() const;
 	const double getMass() const;
-	const bool willDetectCollisionsWithGameObjects();
+	const bool willDetectCollisionsWithGameObjects() const;
+	const bool willCollideWithGameObjects() const;
 };
 #endif

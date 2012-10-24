@@ -98,15 +98,37 @@ void PlayState::render() {
 
 const std::vector<std::vector<GameObject*>> PlayState::getGameObjectCollisions() {
 	std::vector<std::vector<GameObject*>> collisions(m_gameObjects.size());
+	std::vector< GameObject* > collidables;
+	collidables.reserve(m_gameObjects.size());
+	std::vector< GameObject* > sensors;
+	sensors.reserve(m_gameObjects.size());
+
 	for (int i = 0; i < m_gameObjects.size(); i++) {
 		if (m_gameObjects[i]->willDetectCollisionsWithGameObjects()) {
-			for (int j = i + 1; j < m_gameObjects.size(); j++) {
-				if (m_gameObjects[i]->isTouching(m_gameObjects[j])) {
-					collisions[i].push_back(m_gameObjects[j]);
-					if (m_gameObjects[j]->willDetectCollisionsWithGameObjects()) {
-						collisions[j].push_back(m_gameObjects[i]);
+			sensors.push_back(m_gameObjects[i]);
+		} else if (m_gameObjects[i]->willCollideWithGameObjects()) {
+			collidables.push_back(m_gameObjects[i]);
+		}
+	}
+
+	for (int i = 0; i < sensors.size(); i++) {
+		for (int j = i + 1; j < sensors.size(); j++) {
+			if (sensors[i]->willCollideWithGameObjects() || sensors[j]->willCollideWithGameObjects()) {
+				if (sensors[i]->isTouching(sensors[j])) {
+					if (sensors[j]->willCollideWithGameObjects()) {
+						collisions[i].push_back(sensors[j]);
+					}
+					if (sensors[i]->willCollideWithGameObjects()) {
+						collisions[j].push_back(sensors[i]);
 					}
 				}
+			}
+		}
+	}
+	for (int i = 0; i < collidables.size(); i++) {
+		for (int j = 0; j < sensors.size(); j++) {
+			if (collidables[i]->isTouching(sensors[j])) {
+				collisions[j].push_back(collidables[i]);
 			}
 		}
 	}

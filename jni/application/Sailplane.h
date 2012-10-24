@@ -19,9 +19,10 @@ public:
 	Sailplane(const Zeni::Point3f &position = Zeni::Point3f(),
 		const Zeni::Quaternion &orientation = Zeni::Quaternion(),
 		const Zeni::Model &model = Zeni::Model("models/plane.3ds"),
+		const CollisionGeometry &collisionGeometry = CollisionGeometry("models/plane.col"),
 		const Zeni::Vector3f &velocity = Zeni::Vector3f(100,0,0),
 		const Zeni::Vector3f &force = Zeni::Vector3f(),
-		const double mass = 10.0,
+		const double mass = 200.0,
 		const double scale = 10.0);
 
 	virtual void stepPhysics(const double timeStep);

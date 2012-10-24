@@ -6,10 +6,11 @@
 Sailplane::Sailplane(const Zeni::Point3f &position,
 		const Zeni::Quaternion &orientation,
 		const Zeni::Model &model,
+		const CollisionGeometry &collisionGeometry,
 		const Zeni::Vector3f &velocity,
 		const Zeni::Vector3f &force,
 		const double mass,
-		const double scale) : GameObject(position, orientation, model, velocity, force, mass, scale) {
+		const double scale) : GameObject(position, orientation, model, collisionGeometry, velocity, force, mass, scale) {
 	m_wingspan = 15.0;
 	m_wingdepth = 2.0;
 	m_airDensity = 1.0;
@@ -40,7 +41,7 @@ const Zeni::Vector3f Sailplane::getDrag() const {
 
 	Zeni::Vector3f velocity = nonForwardVelocity - nonForwardSideVelocity + nonForwardSideVelocity*2.0;
 
-	return -velocity;
+	return -velocity * getMass() * .1;
 }
 
 const Zeni::Vector3f Sailplane::getLift() const {
@@ -54,7 +55,7 @@ const Zeni::Vector3f Sailplane::getLift() const {
 	//double lift = 0.5 * m_airDensity * velocity.magnitude2() * m_wingspan * m_wingdepth * getLiftCoefficient();
 	double lift = getLiftCoefficient() * Utils::getVectorComponent(getVelocity(), getForwardVector()).magnitude2();
 
-	return upVector * lift *.1;
+	return upVector * lift * getMass() * .01;
 }
 
 const double Sailplane::getLiftCoefficient() const {
