@@ -44,7 +44,7 @@ public:
 		const Zeni::Vector3f &velocity = Zeni::Vector3f(),
 		const Zeni::Vector3f &force = Zeni::Vector3f(),
 		const double mass = 1.0,
-		const double scale = 1.0);
+		const Zeni::Vector3f &scale = Zeni::Vector3f(1.0f, 1.0f, 1.0f));
 
 	const bool isTouching(GameObject* object);
 

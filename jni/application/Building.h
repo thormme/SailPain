@@ -9,8 +9,9 @@ private:
 public:
 	Building(const Zeni::Point3f &position = Zeni::Point3f(),
 		const Zeni::Quaternion &orientation = Zeni::Quaternion(),
-		const Zeni::Model &model = Zeni::Model("models/plane.3ds"),
-		const double scale = 10.0);
+		const Zeni::Model &model = Zeni::Model("models/placeholder.3ds"),
+		const CollisionGeometry &collisionGeometry = CollisionGeometry("models/placeholder.col"),
+		const Zeni::Vector3f &scale = Zeni::Vector3f(10.0f, 10.0f, 100.0f));
 
 };
 #endif

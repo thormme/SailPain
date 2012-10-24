@@ -23,7 +23,7 @@ public:
 		const Zeni::Vector3f &velocity = Zeni::Vector3f(100,0,0),
 		const Zeni::Vector3f &force = Zeni::Vector3f(),
 		const double mass = 200.0,
-		const double scale = 10.0);
+		const Zeni::Vector3f &scale = Zeni::Vector3f(10.0f, 10.0f, 10.0f));
 
 	virtual void stepPhysics(const double timeStep);
 	virtual void handleCollisions(const std::vector<GameObject*> &collisions);

@@ -10,10 +10,12 @@ Sailplane::Sailplane(const Zeni::Point3f &position,
 		const Zeni::Vector3f &velocity,
 		const Zeni::Vector3f &force,
 		const double mass,
-		const double scale) : GameObject(position, orientation, model, collisionGeometry, velocity, force, mass, scale) {
+		const Zeni::Vector3f &scale) : GameObject(position, orientation, model, collisionGeometry, velocity, force, mass, scale) {
 	m_wingspan = 15.0;
 	m_wingdepth = 2.0;
 	m_airDensity = 1.0;
+	detectCollisionsWithGameObjects();
+	collideWithGameObjects();
 }
 
 const Zeni::Vector3f Sailplane::getNonLateralVelocity() const {
@@ -106,10 +108,10 @@ const StateModifications Sailplane::act(const std::vector<GameObject*> &collisio
 		setYawRate(-Utils::PI/2.0);
 	}
 	if (Input::isKeyDown(SDLK_UP)) {
-		setForce(getForwardVector()*100);
+		setForce(getForwardVector()*10000);
 	}
 	if (Input::isKeyDown(SDLK_DOWN)) {
-		setForce(-getForwardVector()*100);
+		setForce(-getForwardVector()*10000);
 	}
 	if (Input::isKeyDown(SDLK_a)) {
 		setRollRate(-Utils::PI/2.0);

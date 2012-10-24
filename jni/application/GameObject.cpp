@@ -11,7 +11,7 @@ GameObject::GameObject(const Zeni::Point3f &position,
 		const Zeni::Vector3f &velocity,
 		const Zeni::Vector3f &force,
 		const double mass,
-		const double scale)
+		const Zeni::Vector3f &scale)
 		: m_position(position),
 		m_orientation(orientation),
 		m_model(model),
@@ -19,7 +19,7 @@ GameObject::GameObject(const Zeni::Point3f &position,
 		m_velocity(velocity),
 		m_force(force),
 		m_mass(mass),
-		m_scale(Zeni::Vector3f(scale, scale, scale)) {
+		m_scale(scale) {
 	m_collideWithGameObjects = false;
 	m_yawRate = 0.0;
 	m_pitchRate = 0.0;
@@ -46,12 +46,12 @@ const bool doFacesIntersect(const Zeni::Point3f face1[3], const Zeni::Point3f fa
 }
 
 const bool GameObject::isTouching(GameObject* object) {
-	double boundingRadius = (m_model.get_extents().lower_bound - m_model.get_extents().upper_bound).magnitude() / 2.0;
+	/*double boundingRadius = (m_model.get_extents().lower_bound - m_model.get_extents().upper_bound).magnitude() / 2.0;
 	double objectBoundingRadius = (object->m_model.get_extents().lower_bound - object->m_model.get_extents().upper_bound).magnitude() / 2.0;
 	double minimumSeparation = boundingRadius + objectBoundingRadius;
-	if ((getPosition() - object->getPosition()).magnitude() > minimumSeparation) {
+	if ((getPosition() - object->getPosition()).magnitude() > minimumSeparation * ) {
 		return false;
-	}
+	}*/
 
 	/*Lib3dsFile * file = m_model.get_file();
 	Lib3dsFile * objectFile = object->m_model.get_file();
