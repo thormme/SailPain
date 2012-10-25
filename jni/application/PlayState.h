@@ -4,18 +4,20 @@
 #include "Level.h"
 #include "GameObject.h"
 #include "Viewport.h"
+#include "Player.h"
 
 class PlayState : public Zeni::Gamestate_Base {
   PlayState(const PlayState &);
   PlayState operator=(const PlayState &);
 
 public:
-  PlayState();
+  PlayState(std::vector<Player*> players, std::string level);
   ~PlayState();
 
 private:
 	Level * m_level;
 	std::vector<Viewport*> m_viewports;
+	std::vector<Player*> m_players;
 	std::vector<GameObject*> m_gameObjects;
 	Zeni::Chronometer<Zeni::Time> m_chronometer;
 	float m_timePassed;

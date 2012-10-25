@@ -14,7 +14,7 @@ Viewport::~Viewport(){}
 
 void Viewport::stepViewportPosition(double timeStep) {
 	Zeni::Vector3f facingDirection = m_trackedObject->getVelocity().normalized();
-	m_camera.position = m_trackedObject->getPosition() - facingDirection * 200.0f;
+	m_camera.position = m_trackedObject->getPosition() - facingDirection * 300.0f;
 	double pitch = Utils::getAngleBetweenVectors(facingDirection, facingDirection.get_ij());
 	if (facingDirection.k > 0.0) {
 		pitch *= -1.0;
@@ -29,13 +29,15 @@ void Viewport::render(const Level &level, const std::vector<GameObject*> &object
 
 	Zeni::Light light = Zeni::Light(Zeni::Color(0.0, 0.3, 0.3, 0.3), Zeni::Color(0.0, 0.3, 0.3, 0.3));
 	light.position = Zeni::Point3f(10, 10, 10);
-	light.set_spot_phi(Utils::PI*1.5);
+	light.spot_direction = Zeni::Vector3f(1.0f, 1.0f, -4.0);
 	light.set_light_type(Zeni::LIGHT_DIRECTIONAL);
-	vr.set_lighting(true);
+	
 	vr.set_ambient_lighting(Zeni::Color(0.0f, 0.0f, 0.0f, 0.0f));
 	vr.set_Light(0, light);
 
 	level.render();
+
+	vr.set_lighting(true);
 
 	for (int i=0; i < objects.size(); i++) {
 		objects[i]->render();

@@ -8,19 +8,33 @@
 #include "lib3ds.h"
 #include "Sailplane.h"
 #include "Building.h"
+#include "Time.h"
 
-PlayState::PlayState() {
+PlayState::PlayState(std::vector<Player*> players, std::string level) {
     set_pausable(true);
-	m_level = new Level("level1");
-	m_gameObjects.push_back(new Sailplane(Zeni::Point3f(0.0, 0.0, 100.0)));
+	m_level = new Level(level);
+	m_players = players;
 
 	for (int i=0; i < 10; i++) {
-		m_gameObjects.push_back(new Building(m_level->getPositionAtPoint(Zeni::Vector2f(m_level->getBounds().get_ij()).multiply_by(Zeni::Vector2f((float)(rand()%1000)/1000.0f, (float)(rand()%1000)/1000.0f)))));
+		m_gameObjects.push_back(new Building(m_level->getPositionAtPoint(Zeni::Vector2f(m_level->getBounds().get_ij()).multiply_by(Zeni::Vector2f((float)(rand()%1000)/1000.0f, (float)(rand()%1000)/1000.0f))), Zeni::Quaternion(), Zeni::Model("models/buildingvert.3ds")));
+	}
+	
+	Zeni::Vector2f screenSize = Zeni::Vector2f(Zeni::Point2f(Zeni::get_Video().get_render_target_size()));
+	for (int i = 0; i < players.size(); i++) {
+		Zeni::Vector3f levelBounds = m_level->getBounds();
+		Zeni::Vector3f levelCenter(levelBounds - Zeni::Vector3f(levelBounds.i, levelBounds.j, 0.0f) * 0.5);
+		m_gameObjects.push_back(players[i]->getNewPlane(levelCenter + (Zeni::Quaternion((float)(i)/(float)players.size() * Utils::PI*2.0f, 0.0f, 0.0f) * Zeni::Vector3f(1.0f, 0.0f, 0.0f)) * levelBounds.i));
+		if (players.size() == 1) {
+			m_viewports.push_back(new Viewport(players[i]->getLastPlane(), Zeni::Point2f(), Zeni::Vector2f(1.0f, 1.0f)));
+		} else if (players.size() == 2) {
+			m_viewports.push_back(new Viewport(players[i]->getLastPlane(), Zeni::Point2f((double)(i)/2.0f, 0), Zeni::Vector2f(0.5f, 1.0f)));
+		} else if (players.size() > 2) {
+			m_viewports.push_back(new Viewport(players[i]->getLastPlane(), Zeni::Point2f((double)(i%2)/2.0f, (double)(i/2)/2.0f), Zeni::Vector2f(0.5f, 0.5f)));
+		}
 	}
 
 	m_chronometer.start();
 	m_timePassed = 0.0;
-	m_viewports.push_back(new Viewport(m_gameObjects[0], Zeni::Point2f(0,0), Zeni::Vector2f(1.0, 1.0), Zeni::Camera(Zeni::Point3f(-100, -10, 0))));
 }
 
 PlayState::~PlayState() {
@@ -71,7 +85,7 @@ void PlayState::perform_logic() {
 
 	StateModifications stateModifications = StateModifications();
 
-	Input::stepInput();
+	Time::updateGameTime(timeStep);
 
 	// Run physics
 	for (int i=0; i < m_gameObjects.size(); i++) {
@@ -91,6 +105,7 @@ void PlayState::perform_logic() {
 	}
 
 	applyStateModifications(stateModifications);
+	Input::stepInput();
 
 }
 
@@ -163,7 +178,7 @@ void PlayState::applyStateModifications(StateModifications &stateModifications) 
 	for (std::list<GameObject*>::iterator it = stateModifications.gameObjectAdditions.begin(); it != stateModifications.gameObjectAdditions.end(); it++) {
 		addGameObject(*it);
 	}
-	for (std::list<GameObject*>::iterator it = stateModifications.gameObjectAdditions.begin(); it != stateModifications.gameObjectAdditions.end(); it++) {
+	for (std::list<GameObject*>::iterator it = stateModifications.gameObjectRemovals.begin(); it != stateModifications.gameObjectRemovals.end(); it++) {
 		removeGameObject(*it);
 	}
 }

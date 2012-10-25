@@ -5,7 +5,7 @@
  */
 
 #include <zenilib.h>
-#include "PlayState.h"
+#include "PlayerSetupState.h"
 
 #if defined(_DEBUG) && defined(_WINDOWS)
 #define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
@@ -54,7 +54,7 @@ private:
 class Bootstrap {
   class Gamestate_One_Initializer : public Gamestate_Zero_Initializer {
     virtual Gamestate_Base * operator()() {
-      Window::set_title("zenilib Application");
+      Window::set_title("Sailpain");
 
       get_Joysticks();
       get_Video();
@@ -63,7 +63,7 @@ class Bootstrap {
       get_Sounds();
       get_Game().joy_mouse.enabled = true;
 
-      return new Title_State<PlayState, Instructions_State>("Zenipex Library\nApplication");
+      return new Title_State<PlayerSetupState, Instructions_State>("Sailpain\nBring the Plane");
     }
   } m_goi;
 

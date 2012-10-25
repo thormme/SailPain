@@ -1,7 +1,9 @@
 #include <zenilib.h>
 #include "Sailplane.h"
+#include "Player.h"
 #include "Utils.h"
 #include "Input.h"
+#include "Bullet.h"
 
 Sailplane::Sailplane(const Zeni::Point3f &position,
 		const Zeni::Quaternion &orientation,
@@ -14,6 +16,7 @@ Sailplane::Sailplane(const Zeni::Point3f &position,
 	m_wingspan = 15.0;
 	m_wingdepth = 2.0;
 	m_airDensity = 1.0;
+	m_driver = nullptr;
 	detectCollisionsWithGameObjects();
 	collideWithGameObjects();
 }
@@ -82,6 +85,22 @@ const double Sailplane::getLiftCoefficient() const {
 	return liftCoefficient;
 }
 
+void Sailplane::pitch(double amount) {
+	setPitchRate(Utils::PI/2.0 * amount);
+}
+
+void Sailplane::roll(double amount) {
+	setRollRate(Utils::PI/2.0 * amount);
+}
+
+GameObject * Sailplane::fire(double rate) {
+	return new Bullet(this, getPosition(), getOrientation(), getForwardVector() * 1500.0f + Utils::getVectorComponent(getVelocity(), getForwardVector()));
+}
+
+void Sailplane::useSpecial() {
+
+}
+
 void Sailplane::stepPhysics(const double timeStep) {
 	double halfLife = .1;
 	setYawRate(getYawRate()*pow(0.5, timeStep/halfLife));
@@ -100,30 +119,20 @@ void Sailplane::handleCollisions(const std::vector<GameObject*> &collisions) {
 }
 
 const StateModifications Sailplane::act(const std::vector<GameObject*> &collisions) {
+	StateModifications stateModifications;
+
 	setForce(Zeni::Vector3f());
-	if (Input::isKeyDown(SDLK_LEFT)) {
-		setYawRate(Utils::PI/2.0);
+
+	if (m_driver != nullptr/* && !m_disabled*/) {
+		stateModifications.combine(m_driver->drivePlane(*this, collisions));
 	}
-	if (Input::isKeyDown(SDLK_RIGHT)) {
-		setYawRate(-Utils::PI/2.0);
-	}
-	if (Input::isKeyDown(SDLK_UP)) {
+
+	if (Input::isKeyDown(SDLK_a)) {
 		setForce(getForwardVector()*10000);
 	}
-	if (Input::isKeyDown(SDLK_DOWN)) {
+	if (Input::isKeyDown(SDLK_s)) {
 		setForce(-getForwardVector()*10000);
 	}
-	if (Input::isKeyDown(SDLK_a)) {
-		setRollRate(-Utils::PI/2.0);
-	}
-	if (Input::isKeyDown(SDLK_d)) {
-		setRollRate(Utils::PI/2.0);
-	}
-	if (Input::isKeyDown(SDLK_w)) {
-		setPitchRate(Utils::PI/2.0);
-	}
-	if (Input::isKeyDown(SDLK_s)) {
-		setPitchRate(-Utils::PI/2.0);
-	}
-	return StateModifications();
+
+	return stateModifications;
 }

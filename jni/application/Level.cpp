@@ -11,7 +11,7 @@ std::string getImageNameFromColor(Uint32 color) {
 }
 
 Level::Level(std::string fileName) {
-	m_vertexSeparation = Zeni::Vector2f(32.0, 32.0);
+	m_vertexSeparation = Zeni::Vector2f(64.0, 64.0);
 	m_maxHeight = 128.0;
 
 	Zeni::Image levelImage = Zeni::Image(Zeni::String("levels/" + fileName + "-heightmap.png"));

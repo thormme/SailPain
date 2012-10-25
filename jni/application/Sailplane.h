@@ -3,8 +3,12 @@
 #include <zenilib.h>
 #include "GameObject.h"
 
+class Player;
+
 class Sailplane : public GameObject {
+	friend class Player;
 private:
+	Player * m_driver;
 	double m_wingspan;
 	double m_wingdepth;
 
@@ -14,6 +18,11 @@ private:
 	const Zeni::Vector3f getLift() const;
 	const Zeni::Vector3f getDrag() const;
 	const double getLiftCoefficient() const;
+
+	void pitch(double amount);
+	void roll(double amount);
+	GameObject * fire(double rate);
+	void useSpecial();
 
 public:
 	Sailplane(const Zeni::Point3f &position = Zeni::Point3f(),
