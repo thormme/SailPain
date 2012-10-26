@@ -7,13 +7,22 @@ namespace {
 	std::vector<Player*> players;
 	std::string level;
 	Zeni::String diagramImage;
+	Zeni::Vector3f levelSize;
+	double buildingDensity;
+	double powerupDensity;
 }
 
 PlayerSetupState::PlayerSetupState() 
-		: m_mapSelect(Zeni::Point2f(500.0f, 225.0f), Zeni::Point2f(700.0f,275.0f), Zeni::Point2f(500.0f, 225.0f), Zeni::Point2f(700.0f,525), "system_36_800x600"),
+		: m_mapSelect(Zeni::Point2f(500.0f, -225.0f), Zeni::Point2f(700.0f,-275.0f), Zeni::Point2f(500.0f, 225.0f), Zeni::Point2f(700.0f,525), "system_36_800x600"),
+		m_mapSize(Zeni::Point2f(50.0f, 175.0f), Zeni::Point2f(250.0f,175.0f), 25.0f),
+		m_buildingDensitySlider(Zeni::Point2f(300.0f, 175.0f), Zeni::Point2f(500.0f,175.0f), 25.0f),
+		m_powerupDensitySlider(Zeni::Point2f(550.0f, 175.0f), Zeni::Point2f(750.0f,175.0f), 25.0f),
 		Widget_Gamestate(std::make_pair(Zeni::Point2f(0.0f, 0.0f), Zeni::Point2f(800.0f, 600.0f))) {
 	m_widgets.lend_Widget(play_button);
 	m_widgets.lend_Widget(m_mapSelect);
+	m_widgets.lend_Widget(m_mapSize);
+	m_widgets.lend_Widget(m_buildingDensitySlider);
+	m_widgets.lend_Widget(m_powerupDensitySlider);
 	for (int i=0; i < 4; i++) {
 		players.push_back(new Player());
 		m_controls.push_back(new ControlTypeSelect(players.back(), Zeni::Point2f(200.0f*(float)(i), 0.0f), Zeni::Point2f(200.0f*(float)(i+1),50.0f), Zeni::Point2f(200.0f*(float)(i), 0.0f), Zeni::Point2f(200.0f*(float)(i+1),350), "system_36_800x600"));
@@ -121,7 +130,35 @@ void PlayerSetupState::MapSelect::on_accept(const Zeni::String &option) {
 }
 
 void PlayerSetupState::Play_Button::on_accept() {
-	Zeni::get_Game().push_state(new PlayState(players, level));
+	Zeni::get_Game().push_state(new PlayState(players, level, levelSize, buildingDensity, powerupDensity));
+}
+
+
+PlayerSetupState::MapSize::MapSize(const Zeni::Point2f &endPointA, const Zeni::Point2f &endPointB, const float &sliderRadius) 
+: Slider(endPointA, endPointB, sliderRadius) {
+	on_accept();
+}
+
+void PlayerSetupState::MapSize::on_accept() {
+	levelSize = Zeni::Vector3f(64.0 * get_slider_position(), 64.0 * get_slider_position(), 128.0f);
+}
+
+PlayerSetupState::BuildingDensitySlider::BuildingDensitySlider(const Zeni::Point2f &endPointA, const Zeni::Point2f &endPointB, const float &sliderRadius) 
+: Slider(endPointA, endPointB, sliderRadius) {
+	on_accept();
+}
+
+void PlayerSetupState::BuildingDensitySlider::on_accept() {
+	buildingDensity = get_slider_position();
+}
+
+PlayerSetupState::PowerupDensitySlider::PowerupDensitySlider(const Zeni::Point2f &endPointA, const Zeni::Point2f &endPointB, const float &sliderRadius) 
+: Slider(endPointA, endPointB, sliderRadius) {
+	on_accept();
+}
+
+void PlayerSetupState::PowerupDensitySlider::on_accept() {
+	powerupDensity = get_slider_position();
 }
 
 void PlayerSetupState::render() {

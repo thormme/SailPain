@@ -23,4 +23,9 @@ Powerup::Powerup(const Zeni::Point3f &position, Type powerupType)
 	
 	collideWithGameObjects();
 	setYawRate(Utils::PI/10.0);
+	type = powerupType;
+}
+
+const Powerup::Type Powerup::getType() const {
+	return type;
 }

@@ -60,3 +60,23 @@ const bool CollisionGeometry::isTouching(const CollisionGeometry &collisionGeome
 	}
 	return false;
 }
+
+const bool CollisionGeometry::isTouching(const Zeni::Collision::Plane &plane, 
+		const Zeni::Point3f &position1,
+		const Zeni::Quaternion &orientation1,
+		const Zeni::Vector3f &scale1) const {
+	std::vector<Zeni::Collision::Parallelepiped> geometry;
+	for (int i=0; i < m_geometry.size(); i++) {
+		Zeni::Point3f position = orientation1 * Zeni::Vector3f(m_geometry[i].get_point()).multiply_by(scale1) + Zeni::Vector3f(position1);
+		Zeni::Point3f sideA = orientation1 * m_geometry[i].get_edge_a().multiply_by(scale1);
+		Zeni::Point3f sideB = orientation1 * m_geometry[i].get_edge_b().multiply_by(scale1);
+		Zeni::Point3f sideC = orientation1 * m_geometry[i].get_edge_c().multiply_by(scale1);
+		geometry.push_back(Zeni::Collision::Parallelepiped(position, sideA, sideB, sideC));
+	}
+	for (int j=0; j < geometry.size(); j++) {
+		if (geometry[j].intersects(plane)) {
+			return true;
+		}
+	}
+	return false;
+}

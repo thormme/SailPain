@@ -15,6 +15,7 @@ Sailplane * Player::getNewPlane(const Zeni::Point3f &position, const Zeni::Quate
 	} else {
 		m_plane = new Sailplane(position, orientation);
 	}
+	m_plane->setVelocity(orientation * Zeni::Vector3f(100.0f, 0.0f, 0.0f));
 	m_plane->m_driver = this;
 	return m_plane;
 }
@@ -30,8 +31,8 @@ void Player::setControls(const std::vector<InputAction> &controls) {
 
 void Player::setControls(int joyIndex) {
 	if (joyIndex >= 0) {
-		m_controls[FORWARD] = InputAction(joyIndex, Zeni::Joysticks::AXIS_LEFT_THUMB_Y, -2.0, 0.25);
-		m_controls[BACKWARD] = InputAction(joyIndex, Zeni::Joysticks::AXIS_LEFT_THUMB_Y, -0.25, 2.0);
+		m_controls[FORWARD] = InputAction(joyIndex, Zeni::Joysticks::AXIS_LEFT_THUMB_Y, -0.25, 2.0);
+		m_controls[BACKWARD] = InputAction(joyIndex, Zeni::Joysticks::AXIS_LEFT_THUMB_Y, -2.0, 0.25);
 		m_controls[LEFT] = InputAction(joyIndex, Zeni::Joysticks::AXIS_LEFT_THUMB_X, -0.25, 2.0);
 		m_controls[RIGHT] = InputAction(joyIndex, Zeni::Joysticks::AXIS_LEFT_THUMB_X, -2.0, 0.25);
 		m_controls[FIRE] = InputAction(joyIndex, Zeni::Joysticks::AXIS_RIGHT_TRIGGER, -2.0, 0.25);

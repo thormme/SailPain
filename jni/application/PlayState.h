@@ -11,7 +11,7 @@ class PlayState : public Zeni::Gamestate_Base {
   PlayState operator=(const PlayState &);
 
 public:
-  PlayState(std::vector<Player*> players, std::string level);
+	PlayState(std::vector<Player*> players, std::string level, const Zeni::Vector3f &levelSize = Zeni::Vector3f(64.0f, 64.0f, 128.0f), const double buildingDensity = 0.5, const double powerupDensity = 0.5);
   ~PlayState();
 
 private:

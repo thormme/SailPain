@@ -10,9 +10,9 @@ std::string getImageNameFromColor(Uint32 color) {
 	return "dirt";
 }
 
-Level::Level(std::string fileName) {
-	m_vertexSeparation = Zeni::Vector2f(64.0, 64.0);
-	m_maxHeight = 128.0;
+Level::Level(std::string fileName, Zeni::Vector3f levelSize) {
+	m_vertexSeparation = Zeni::Vector2f(levelSize.i, levelSize.j);
+	m_maxHeight = levelSize.k;
 
 	Zeni::Image levelImage = Zeni::Image(Zeni::String("levels/" + fileName + "-heightmap.png"));
 	// Create points
@@ -54,6 +54,12 @@ Level::Level(std::string fileName) {
 	}
 }
 
+Level::~Level() {
+	for (int i=0; i < m_triangles.size(); i++) {
+		delete m_triangles[i];
+	}
+}
+
 void Level::render() const {
 	for (int i=0; i < m_trianglesByTexture.size(); i++) {
 		Zeni::get_Video().apply_Texture(Zeni::get_Textures()["dirt"]);
@@ -65,18 +71,26 @@ void Level::render() const {
 }
 
 const Zeni::Point3f Level::getPositionAtPoint(Zeni::Point2f point) const {
-	if (point.y < 0 || (int)(point.y/m_vertexSeparation.j) >= m_vertices.size()) {
+	if (point.x < 0 || (int)(point.x/m_vertexSeparation.i) >= m_vertices.size()) {
 		return Zeni::Point3f(point.x, point.y, 0.0f);
 	}
-	if (point.x < 0 || (int)(point.x/m_vertexSeparation.i) >= m_vertices[(int)point.x].size()) {
+	if (point.y < 0 || (int)(point.y/m_vertexSeparation.j) >= m_vertices[(int)(point.x/m_vertexSeparation.i)].size()) {
 		return Zeni::Point3f(point.x, point.y, 0.0f);
 	}
-	return m_vertices[(int)point.x][(int)point.y].position;
+	return m_vertices[(int)(point.x/m_vertexSeparation.i)][(int)(point.y/m_vertexSeparation.j)].position;
+}
+
+const Zeni::Collision::Plane Level::getPlaneAtPoint(Zeni::Point2f point) const {
+	Zeni::Point3f p1, p2, p3;
+	p1 = getPositionAtPoint(point);
+	p2 = getPositionAtPoint(point + Zeni::Vector2f(m_vertexSeparation.i, 0.0f));
+	p3 = getPositionAtPoint(point + Zeni::Vector2f(0.0f, m_vertexSeparation.j));
+	return Zeni::Collision::Plane(p1, Utils::getSurfaceNormal(p1, p2, p3));
 }
 
 const Zeni::Vector3f Level::getBounds() const {
 	if (m_vertices.size() &&  m_vertices[0].size()) {
-		return Zeni::Vector3f(m_vertices[0].size(), m_vertices.size(), m_maxHeight);
+		return Zeni::Vector3f(m_vertices[0].size() * m_vertexSeparation.i, m_vertices.size() * m_vertexSeparation.j, m_maxHeight);
 	} else {
 		return Zeni::Vector3f();
 	}

@@ -9,25 +9,44 @@
 #include "Sailplane.h"
 #include "Building.h"
 #include "Time.h"
+#include "Powerup.h"
+#include "ResultsState.h"
 
-PlayState::PlayState(std::vector<Player*> players, std::string level) {
+PlayState::PlayState(std::vector<Player*> players, std::string level, const Zeni::Vector3f &levelSize, const double buildingDensity, const double powerupDensity) {
     set_pausable(true);
-	m_level = new Level(level);
+	m_level = new Level(level, levelSize);
 	m_players = players;
 
-	for (int i=0; i < 10; i++) {
-		m_gameObjects.push_back(new Building(m_level->getPositionAtPoint(Zeni::Vector2f(m_level->getBounds().get_ij()).multiply_by(Zeni::Vector2f((float)(rand()%1000)/1000.0f, (float)(rand()%1000)/1000.0f))), Zeni::Quaternion(), Zeni::Model("models/buildingvert.3ds")));
+	for (int i=0; i < 20 * buildingDensity; i++) {
+		m_gameObjects.push_back(new Building(m_level->getPositionAtPoint(Zeni::Vector2f(m_level->getBounds().get_ij()).multiply_by(Zeni::Vector2f((float)(rand()%1000)/1000.0f, (float)(rand()%1000)/1000.0f))), Zeni::Quaternion(), Zeni::Model("models/buildingvert.3ds"), CollisionGeometry("models/building.col"), Zeni::Vector3f(200.0f, 200.0f, 200.0f + 800.0f * ((float)(rand()%1000)/1000.0f))));
+	}
+	for (int i=0; i < 20 * powerupDensity; i++) {
+		m_gameObjects.push_back(new Powerup(m_level->getPositionAtPoint(Zeni::Vector2f(m_level->getBounds().get_ij()).multiply_by(Zeni::Vector2f((float)(rand()%1000)/1000.0f, (float)(rand()%1000)/1000.0f))) + Zeni::Vector3f(0.0f, 0.0f, m_level->getBounds().k), Powerup::Type(rand()%(int)(Powerup::Type::FINAL_ELEMENT))));
+		for (int j=0; j < 100; j++) {
+			bool touching = false;
+			for (int k=0; k < m_gameObjects.size() - 1; k++) {
+				if (m_gameObjects[k]->isTouching(m_gameObjects[m_gameObjects.size() - 1])) {
+					touching = true;
+					break;
+				}
+			}
+			if (!touching) {
+				break;
+			} else {
+				m_gameObjects[m_gameObjects.size() - 1]->setPosition(m_level->getPositionAtPoint(Zeni::Vector2f(m_level->getBounds().get_ij()).multiply_by(Zeni::Vector2f((float)(rand()%1000)/1000.0f, (float)(rand()%1000)/1000.0f))) + Zeni::Vector3f(0.0f, 0.0f, m_level->getBounds().k + 1000.0f * (float)(rand()%1000)/1000.0f));
+			}
+		}
 	}
 	
 	Zeni::Vector2f screenSize = Zeni::Vector2f(Zeni::Point2f(Zeni::get_Video().get_render_target_size()));
 	for (int i = 0; i < players.size(); i++) {
 		Zeni::Vector3f levelBounds = m_level->getBounds();
-		Zeni::Vector3f levelCenter(levelBounds - Zeni::Vector3f(levelBounds.i, levelBounds.j, 0.0f) * 0.5);
-		m_gameObjects.push_back(players[i]->getNewPlane(levelCenter + (Zeni::Quaternion((float)(i)/(float)players.size() * Utils::PI*2.0f, 0.0f, 0.0f) * Zeni::Vector3f(1.0f, 0.0f, 0.0f)) * levelBounds.i));
+		Zeni::Vector3f levelCenter(levelBounds - Zeni::Vector3f(levelBounds.i * 0.5, levelBounds.j * 0.5, -100.0f));
+		m_gameObjects.push_back(players[i]->getNewPlane(levelCenter + (Zeni::Quaternion((float)(i)/(float)players.size() * Utils::PI*2.0f, 0.0f, 0.0f) * Zeni::Vector3f(1.0f, 0.0f, 0.0f)) * levelBounds.i, Zeni::Quaternion((float)(i)/(float)players.size() * Utils::PI*2.0f + Utils::PI, 0.0f, 0.0f)));
 		if (players.size() == 1) {
 			m_viewports.push_back(new Viewport(players[i]->getLastPlane(), Zeni::Point2f(), Zeni::Vector2f(1.0f, 1.0f)));
 		} else if (players.size() == 2) {
-			m_viewports.push_back(new Viewport(players[i]->getLastPlane(), Zeni::Point2f((double)(i)/2.0f, 0), Zeni::Vector2f(0.5f, 1.0f)));
+			m_viewports.push_back(new Viewport(players[i]->getLastPlane(), Zeni::Point2f(0.0f, (double)(i)/2.0f), Zeni::Vector2f(1.0f, 0.5f)));
 		} else if (players.size() > 2) {
 			m_viewports.push_back(new Viewport(players[i]->getLastPlane(), Zeni::Point2f((double)(i%2)/2.0f, (double)(i/2)/2.0f), Zeni::Vector2f(0.5f, 0.5f)));
 		}
@@ -50,13 +69,13 @@ PlayState::~PlayState() {
 void PlayState::on_push() {
     //get_Window().mouse_grab(true);
     Zeni::get_Window().mouse_hide(true);
-    //get_Game().joy_mouse.enabled = false;
+    Zeni::get_Game().joy_mouse.enabled = false;
 }
 
 void PlayState::on_pop() {
     //get_Window().mouse_grab(false);
     Zeni::get_Window().mouse_hide(false);
-    //get_Game().joy_mouse.enabled = true;
+    Zeni::get_Game().joy_mouse.enabled = true;
 }
 
 void PlayState::on_key(const SDL_KeyboardEvent &event) {
@@ -107,6 +126,24 @@ void PlayState::perform_logic() {
 	applyStateModifications(stateModifications);
 	Input::stepInput();
 
+	for (int i=0; i < m_players.size(); i++) {
+		double distance = m_players[i]->getLastPlane()->getPosition().z - m_level->getPositionAtPoint(Zeni::Point2f(m_players[i]->getLastPlane()->getPosition())).z;
+		if (abs(distance) < 20.0 || distance < 0.0) {
+			if (m_players[i]->getLastPlane()->isTouching(m_level->getPlaneAtPoint(Zeni::Point2f(m_players[i]->getLastPlane()->getPosition()))) || distance < 0.0) {
+				m_players[i]->getLastPlane()->damage(1);
+			}
+		}
+	}
+
+	if (m_timePassed >= 30) {
+		std::vector<Sailplane::Stats> stats;
+		for (int i = 0; i < m_players.size(); i++) {
+			stats.push_back(m_players[i]->getLastPlane()->getStats());
+		}
+		Zeni::get_Game().pop_state();
+		Zeni::get_Game().push_state(new ResultsState(m_players, stats));
+	}
+
 }
 
 void PlayState::render() {
@@ -118,15 +155,19 @@ void PlayState::render() {
 
 
 const std::vector<std::vector<GameObject*>> PlayState::getGameObjectCollisions() {
-	std::vector<std::vector<GameObject*>> collisions(m_gameObjects.size());
+	std::vector<std::vector<GameObject*>> collisions;
+	collisions.resize(m_gameObjects.size());
 	std::vector< GameObject* > collidables;
 	collidables.reserve(m_gameObjects.size());
 	std::vector< GameObject* > sensors;
 	sensors.reserve(m_gameObjects.size());
+	std::vector< int > sensorsIndex;
+	sensorsIndex.reserve(m_gameObjects.size());
 
 	for (int i = 0; i < m_gameObjects.size(); i++) {
 		if (m_gameObjects[i]->willDetectCollisionsWithGameObjects()) {
 			sensors.push_back(m_gameObjects[i]);
+			sensorsIndex.push_back(i);
 		} else if (m_gameObjects[i]->willCollideWithGameObjects()) {
 			collidables.push_back(m_gameObjects[i]);
 		}
@@ -137,10 +178,10 @@ const std::vector<std::vector<GameObject*>> PlayState::getGameObjectCollisions()
 			if (sensors[i]->willCollideWithGameObjects() || sensors[j]->willCollideWithGameObjects()) {
 				if (sensors[i]->isTouching(sensors[j])) {
 					if (sensors[j]->willCollideWithGameObjects()) {
-						collisions[i].push_back(sensors[j]);
+						collisions[sensorsIndex[i]].push_back(sensors[j]);
 					}
 					if (sensors[i]->willCollideWithGameObjects()) {
-						collisions[j].push_back(sensors[i]);
+						collisions[sensorsIndex[j]].push_back(sensors[i]);
 					}
 				}
 			}
@@ -149,7 +190,7 @@ const std::vector<std::vector<GameObject*>> PlayState::getGameObjectCollisions()
 	for (int i = 0; i < collidables.size(); i++) {
 		for (int j = 0; j < sensors.size(); j++) {
 			if (collidables[i]->isTouching(sensors[j])) {
-				collisions[j].push_back(collidables[i]);
+				collisions[sensorsIndex[j]].push_back(collidables[i]);
 			}
 		}
 	}

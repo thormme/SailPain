@@ -18,7 +18,12 @@ const StateModifications Bullet::act(const std::vector<GameObject*> &collisions)
 			Sailplane * plane = dynamic_cast<Sailplane*>(collisions[i]);
 			if (plane != nullptr) {
 				stateModifications.gameObjectRemovals.push_back(this);
-				plane->damage(1);
+				if (plane->damage(1)) {
+					Sailplane * ownerPlane = dynamic_cast<Sailplane*>(m_owner);
+					if (ownerPlane != nullptr) {
+						ownerPlane->incrementKills();
+					}
+				}
 				break;
 			} else {
 				Bullet * bullet = dynamic_cast<Bullet*>(collisions[i]);

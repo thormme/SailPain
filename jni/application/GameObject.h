@@ -31,10 +31,12 @@ private:
 	Zeni::Quaternion m_orientation;
 	bool m_collideWithGameObjects;
 	bool m_detectCollisionsWithGameObjects;
+	bool m_solid;
 
 protected:
 	void detectCollisionsWithGameObjects(bool detect = true);
 	void collideWithGameObjects(bool collide = true);
+	void setSolid(bool solid = true);
 
 public:
 	GameObject(const Zeni::Point3f &position = Zeni::Point3f(),
@@ -47,6 +49,7 @@ public:
 		const Zeni::Vector3f &scale = Zeni::Vector3f(1.0f, 1.0f, 1.0f));
 
 	const bool isTouching(GameObject* object);
+	const bool isTouching(const Zeni::Collision::Plane &plane);
 
 	virtual void stepPhysics(const double timeStep);
 	virtual void handleCollisions(const std::vector<GameObject*> &collisions);
@@ -73,5 +76,6 @@ public:
 	const double getMass() const;
 	const bool willDetectCollisionsWithGameObjects() const;
 	const bool willCollideWithGameObjects() const;
+	const bool isSolid() const;
 };
 #endif

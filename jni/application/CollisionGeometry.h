@@ -16,5 +16,10 @@ public:
 		const Zeni::Quaternion &orientation2 = Zeni::Quaternion(),
 		const Zeni::Vector3f &scale1 = Zeni::Vector3f(1.0f, 1.0f, 1.0f),
 		const Zeni::Vector3f &scale2 = Zeni::Vector3f(1.0f, 1.0f, 1.0f)) const;
+
+	const bool CollisionGeometry::isTouching(const Zeni::Collision::Plane &plane, 
+		const Zeni::Point3f &position1,
+		const Zeni::Quaternion &orientation1,
+		const Zeni::Vector3f &scale1) const;
 };
 #endif

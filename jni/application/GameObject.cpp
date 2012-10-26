@@ -21,6 +21,8 @@ GameObject::GameObject(const Zeni::Point3f &position,
 		m_mass(mass),
 		m_scale(scale) {
 	m_collideWithGameObjects = false;
+	m_detectCollisionsWithGameObjects = false;
+	m_solid = false;
 	m_yawRate = 0.0;
 	m_pitchRate = 0.0;
 	m_rollRate = 0.0;
@@ -96,6 +98,10 @@ const bool GameObject::isTouching(GameObject* object) {
 	}
 	return false;*/
 	return m_collisionGeometry.isTouching(object->m_collisionGeometry, m_position, object->m_position, m_orientation, object->m_orientation, m_scale, object->m_scale);
+}
+
+const bool GameObject::isTouching(const Zeni::Collision::Plane &plane) {
+	return m_collisionGeometry.isTouching(plane, m_position, m_orientation, m_scale);
 }
 
 void GameObject::stepPhysics(const double timeStep) {
@@ -197,4 +203,12 @@ void GameObject::detectCollisionsWithGameObjects(bool detect) {
 
 const bool GameObject::willDetectCollisionsWithGameObjects() const {
 	return m_detectCollisionsWithGameObjects;
+}
+
+void GameObject::setSolid(bool solid) {
+	m_solid = solid;
+}
+
+const bool GameObject::isSolid() const {
+	return m_solid;
 }

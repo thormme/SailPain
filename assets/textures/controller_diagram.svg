@@ -22,10 +22,10 @@
      id="defs4" />
   <sodipodi:namedview
      id="base"
-     pagecolor="#ffffff"
+     pagecolor="#000000"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="94.39769"
@@ -46,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -245,7 +245,7 @@
          sodipodi:role="line"
          id="tspan4091"
          x="595.71429"
-         y="353.79071">Reverse</tspan></text>
+         y="353.79071">Use Item</tspan></text>
     <path
        style="fill:none;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 466.98465,392.48776 131.42857,0"
@@ -262,7 +262,7 @@
          sodipodi:role="line"
          id="tspan4091-4"
          x="598.41327"
-         y="399.63058">Forward</tspan></text>
+         y="399.63058">Fire Gun</tspan></text>
     <path
        style="fill:none;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 593.57143,344.50504 -372.57143,0 -36,50"
@@ -286,72 +286,6 @@
          id="tspan4123"
          x="595.71429"
          y="455.2193">Steering</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="597.85718"
-       y="651.64789"
-       id="text4125"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4127"
-         x="597.85718"
-         y="651.64789">Respawn</tspan></text>
-    <path
-       style="fill:none;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 283.57143,544.50504 98.71428,98.42857 213.57143,0"
-       id="path4129"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccc" />
-    <path
-       style="fill:none;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 437.85715,532.36219 22.88392,-55.24382 132.97322,0"
-       id="path4131"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccc" />
-    <text
-       xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="596.57141"
-       y="486.07648"
-       id="text4133"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4135"
-         x="596.57141"
-         y="486.07648">Missile</tspan></text>
-    <path
-       style="fill:none;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 487,504.50504 106.57143,0"
-       id="path4137"
-       inkscape:connector-curvature="0" />
-    <text
-       xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="597.14288"
-       y="513.07648"
-       id="text4139"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4141"
-         x="597.14288"
-         y="513.07648">Jump</tspan></text>
-    <path
-       style="fill:none;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 527.85714,544.50504 64.28572,0"
-       id="path4143"
-       inkscape:connector-curvature="0" />
-    <text
-       xml:space="preserve"
-       style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="598.57141"
-       y="553.07648"
-       id="text4145"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4147"
-         x="598.57141"
-         y="553.07648">Mine</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 201.02036,403.33917 c 0,0 4.04061,-24.24366 -14.64722,-23.99112 -18.68782,0.25254 -18.94036,13.13198 -18.68782,24.74874"

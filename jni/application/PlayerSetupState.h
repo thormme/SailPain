@@ -31,6 +31,39 @@ public:
 		void on_accept(const Zeni::String &option);
 	} m_mapSelect;	
 
+	class MapSize : public Zeni::Slider {
+	//public:
+		MapSize(const MapSelect &);
+		MapSize & operator=(const MapSelect &);
+
+	public:
+		MapSize(const Zeni::Point2f &endPointA, const Zeni::Point2f &endPointB, const float &sliderRadius);
+
+		void on_accept();
+	} m_mapSize;	
+
+	class BuildingDensitySlider : public Zeni::Slider {
+	//public:
+		BuildingDensitySlider(const BuildingDensitySlider &);
+		BuildingDensitySlider & operator=(const BuildingDensitySlider &);
+
+	public:
+		BuildingDensitySlider(const Zeni::Point2f &endPointA, const Zeni::Point2f &endPointB, const float &sliderRadius);
+
+		void on_accept();
+	} m_buildingDensitySlider;	
+
+	class PowerupDensitySlider : public Zeni::Slider {
+	//public:
+		PowerupDensitySlider(const PowerupDensitySlider &);
+		PowerupDensitySlider & operator=(const PowerupDensitySlider &);
+
+	public:
+		PowerupDensitySlider(const Zeni::Point2f &endPointA, const Zeni::Point2f &endPointB, const float &sliderRadius);
+
+		void on_accept();
+	} m_powerupDensitySlider;	
+
 	class Play_Button : public Zeni::Text_Button {
 		Play_Button(const Play_Button &);
 		Play_Button & operator=(const Play_Button &);
