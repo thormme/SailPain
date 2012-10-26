@@ -76,6 +76,7 @@ void PlayerSetupState::ControlTypeSelect::on_accept(const Zeni::String &option) 
 		m_player->setControls(3);
 		diagramImage = "controller_diagram";
 	} else if (option == "Empty") {
+		diagramImage = "";
 		players.erase(std::find(players.begin(), players.end(), m_player));
 		delete m_player;
 		m_player = nullptr;
@@ -124,6 +125,7 @@ void PlayerSetupState::Play_Button::on_accept() {
 }
 
 void PlayerSetupState::render() {
+	Zeni::get_Video().set_clear_Color(Zeni::Color(0xFF000000));
     Widget_Gamestate::render();
 
 	Zeni::Vector2f carImageSize(100.0f, 50.0f);
@@ -134,8 +136,8 @@ void PlayerSetupState::render() {
 	}
 	if (trophyImage != "") {
 		Zeni::render_image(trophyImage, Zeni::Point2f(700.0f,225.0f), Zeni::Point2f(750.0f,272.0f));
-	}
+	}*/
 	if (diagramImage != "") {
 		Zeni::render_image(diagramImage, Zeni::Point2f(100.0f,300.0f), Zeni::Point2f(700.0f,600.0f));
-	}*/
+	}
 }

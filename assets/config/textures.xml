@@ -47,6 +47,16 @@ The following things are unsupported:
     <filepath>textures/placeholder.png</filepath>
     <tile>0</tile>
   </placeholder>
+  <keyboard_diagram>
+    <is_sprite>0</is_sprite>
+    <filepath>textures/keyboard_diagram.png</filepath>
+    <tile>0</tile>
+  </keyboard_diagram>
+  <controller_diagram>
+    <is_sprite>0</is_sprite>
+    <filepath>textures/controller_diagram.png</filepath>
+    <tile>0</tile>
+  </controller_diagram>
   <BUILDING.PNG>
     <is_sprite>0</is_sprite>
     <filepath>textures/building.png</filepath>

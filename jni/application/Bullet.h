@@ -5,6 +5,8 @@
 
 class Bullet : public GameObject {
 private:
+	GameObject * m_owner;
+	double m_deathClock;
 
 public:
 	Bullet(GameObject * owner,
@@ -12,5 +14,6 @@ public:
 		const Zeni::Quaternion &orientation = Zeni::Quaternion(),
 		const Zeni::Vector3f &velocity = Zeni::Vector3f());
 
+	virtual const StateModifications act(const std::vector<GameObject*> &collisions);
 };
 #endif

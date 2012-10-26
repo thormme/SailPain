@@ -4,6 +4,7 @@
 #include "Utils.h"
 #include "Input.h"
 #include "Bullet.h"
+#include "Time.h"
 
 Sailplane::Sailplane(const Zeni::Point3f &position,
 		const Zeni::Quaternion &orientation,
@@ -13,10 +14,16 @@ Sailplane::Sailplane(const Zeni::Point3f &position,
 		const Zeni::Vector3f &force,
 		const double mass,
 		const Zeni::Vector3f &scale) : GameObject(position, orientation, model, collisionGeometry, velocity, force, mass, scale) {
-	m_wingspan = 15.0;
-	m_wingdepth = 2.0;
-	m_airDensity = 1.0;
+	m_health.max = 10;
+	m_health.refill();
 	m_driver = nullptr;
+	m_respawning = false;
+	m_respawnTimer = 0.0;
+	m_fireTimer = 0.0;
+	setDisabled(false);
+	m_initialPosition = getPosition();
+	m_initialVelocity = getVelocity();
+	m_initialOrientation = getOrientation();
 	detectCollisionsWithGameObjects();
 	collideWithGameObjects();
 }
@@ -94,7 +101,12 @@ void Sailplane::roll(double amount) {
 }
 
 GameObject * Sailplane::fire(double rate) {
-	return new Bullet(this, getPosition(), getOrientation(), getForwardVector() * 1500.0f + Utils::getVectorComponent(getVelocity(), getForwardVector()));
+	if (Time::getGameTime() - m_fireTimer > 0.2) {
+		m_fireTimer = Time::getGameTime();
+		return new Bullet(this, getPosition(), getOrientation(), getForwardVector() * 1500.0f + Utils::getVectorComponent(getVelocity(), getForwardVector()));
+	} else {
+		return nullptr;
+	}
 }
 
 void Sailplane::useSpecial() {
@@ -114,7 +126,10 @@ void Sailplane::stepPhysics(const double timeStep) {
 
 void Sailplane::handleCollisions(const std::vector<GameObject*> &collisions) {
 	for (int i=0; i < collisions.size(); i++) {
-		Utils::printDebugMessage("hi!\n");
+		Bullet * bullet = dynamic_cast<Bullet*>(collisions[i]);
+		if (bullet == nullptr) {
+			m_health.consume(m_health.remaining);
+		}
 	}
 }
 
@@ -123,8 +138,21 @@ const StateModifications Sailplane::act(const std::vector<GameObject*> &collisio
 
 	setForce(Zeni::Vector3f());
 
-	if (m_driver != nullptr/* && !m_disabled*/) {
+	if (m_driver != nullptr && !m_disabled) {
 		stateModifications.combine(m_driver->drivePlane(*this, collisions));
+	}
+	if (m_health.remaining <= 0) {
+		respawn();
+		//setImage("race_car-destroyed");
+	}
+	if (m_disabled == true) {
+		/*setBraking(true);
+		accelerate(0);*/
+	}
+	if (m_respawning == true) {
+		if (Time::getGameTime() - m_respawnTimer > 2.0) {
+			completeRespawn();
+		}
 	}
 
 	if (Input::isKeyDown(SDLK_a)) {
@@ -135,4 +163,36 @@ const StateModifications Sailplane::act(const std::vector<GameObject*> &collisio
 	}
 
 	return stateModifications;
+}
+
+void Sailplane::damage(int amount) {
+	m_health.consume(amount);
+}
+
+const Sailplane::Consumable Sailplane::getHealth() const {
+	return m_health;
+}
+
+void Sailplane::setDisabled(bool disabled) {
+	m_disabled = disabled;
+	detectCollisionsWithGameObjects(!disabled);
+	collideWithGameObjects(!disabled);
+}
+
+void Sailplane::respawn() {
+	if (m_respawning == false) {
+		setDisabled(true);
+		m_respawning = true;
+		m_respawnTimer = Time::getGameTime();
+	}
+}
+
+void Sailplane::completeRespawn() {
+	setVelocity(m_initialVelocity);
+	setPosition(m_initialPosition);
+	setOrientation(m_initialOrientation);
+	m_health.refill();
+	//setImage(m_originalImage);
+	setDisabled(false);
+	m_respawning = false;
 }

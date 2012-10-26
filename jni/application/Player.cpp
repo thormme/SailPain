@@ -41,7 +41,7 @@ void Player::setControls(int joyIndex) {
 		m_controls[BACKWARD] = InputAction(SDLK_DOWN);
 		m_controls[LEFT] = InputAction(SDLK_LEFT);
 		m_controls[RIGHT] = InputAction(SDLK_RIGHT);
-		m_controls[FIRE] = InputAction(SDLK_q, InputAction::ButtonState::PRESSED);
+		m_controls[FIRE] = InputAction(SDLK_q);
 		m_controls[SPECIAL] = InputAction(SDLK_w, InputAction::ButtonState::PRESSED);
 	}
 }
@@ -73,7 +73,10 @@ const StateModifications Player::drivePlane(Sailplane &sailplane, const std::vec
 	}
 
 	if (m_controls[FIRE].isActive()) {
-		stateModifications.gameObjectAdditions.push_back(sailplane.fire(m_controls[FIRE].getDegree()));
+		GameObject * object = sailplane.fire(m_controls[FIRE].getDegree());
+		if (object != nullptr) {
+			stateModifications.gameObjectAdditions.push_back(object);
+		}
 	}
 
 	if (m_controls[SPECIAL].isActive()) {
