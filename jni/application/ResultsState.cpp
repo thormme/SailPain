@@ -9,7 +9,16 @@ void ResultsState::render() {
 
 
 	std::ostringstream str;
-	str << "Player " << m_winnerIndex + 1 << " is the winner!";
+	if (m_winnerIndex.size() == 1) {
+		str << "Player " << m_winnerIndex[0] + 1 << " is the winner!";
+	} else {
+		str << "Players " << m_winnerIndex[0] + 1;
+		for (int i=1; i < m_winnerIndex.size(); i++) {
+			str << " and " << m_winnerIndex[i] + 1;
+		}
+		str << " tied for first!";
+	}
+	
 
 	fr.render_text(Zeni::String(str.str()),
 					Zeni::Point2f(400.0f, 150.0f - 0.5f * fr.get_text_height()),
@@ -53,7 +62,10 @@ ResultsState::ResultsState(std::vector<Player*> players, std::vector<Sailplane::
 		int score = m_stats[i].kills - m_stats[i].deaths;
 		if (score > bestScore) {
 			bestScore = score;
-			m_winnerIndex = i;
+			m_winnerIndex.empty();
+			m_winnerIndex.push_back(i);
+		} else if (score == bestScore) {
+			m_winnerIndex.push_back(i);
 		}
 	}
 	//UserData::setBestPosition(mapName.std_str(), m_finishPlace);

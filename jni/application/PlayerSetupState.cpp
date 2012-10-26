@@ -14,9 +14,9 @@ namespace {
 
 PlayerSetupState::PlayerSetupState() 
 		: m_mapSelect(Zeni::Point2f(500.0f, -225.0f), Zeni::Point2f(700.0f,-275.0f), Zeni::Point2f(500.0f, 225.0f), Zeni::Point2f(700.0f,525), "system_36_800x600"),
-		m_mapSize(Zeni::Point2f(50.0f, 175.0f), Zeni::Point2f(250.0f,175.0f), 25.0f),
-		m_buildingDensitySlider(Zeni::Point2f(300.0f, 175.0f), Zeni::Point2f(500.0f,175.0f), 25.0f),
-		m_powerupDensitySlider(Zeni::Point2f(550.0f, 175.0f), Zeni::Point2f(750.0f,175.0f), 25.0f),
+		m_mapSize(Zeni::Point2f(0.0f, 175.0f), Zeni::Point2f(200.0f,175.0f), 25.0f),
+		m_buildingDensitySlider(Zeni::Point2f(290.0f, 175.0f), Zeni::Point2f(490.0f,175.0f), 25.0f),
+		m_powerupDensitySlider(Zeni::Point2f(600.0f, 175.0f), Zeni::Point2f(800.0f,175.0f), 25.0f),
 		Widget_Gamestate(std::make_pair(Zeni::Point2f(0.0f, 0.0f), Zeni::Point2f(800.0f, 600.0f))) {
 	m_widgets.lend_Widget(play_button);
 	m_widgets.lend_Widget(m_mapSelect);
@@ -163,6 +163,36 @@ void PlayerSetupState::PowerupDensitySlider::on_accept() {
 
 void PlayerSetupState::render() {
 	Zeni::get_Video().set_clear_Color(Zeni::Color(0xFF000000));
+
+	Zeni::Font &fr = Zeni::get_Fonts()["system_36_800x600"];
+
+
+	std::ostringstream str;
+	str << "Map Size";
+	
+	fr.render_text(Zeni::String(str.str()),
+		m_mapSize.get_end_point_a() + Zeni::Vector2f(150.0f, -50.0f - 0.5f * fr.get_text_height()),
+					Zeni::get_Colors()["title_text"],
+					Zeni::ZENI_CENTER);
+
+	str.str("");
+	str.clear();
+	str << "Building Density";
+	
+	fr.render_text(Zeni::String(str.str()),
+		m_buildingDensitySlider.get_end_point_a() + Zeni::Vector2f(75.0f, -50.0f - 0.5f * fr.get_text_height()),
+					Zeni::get_Colors()["title_text"],
+					Zeni::ZENI_CENTER);
+
+	str.str("");
+	str.clear();
+	str << "Powerup Density";
+	
+	fr.render_text(Zeni::String(str.str()),
+		m_powerupDensitySlider.get_end_point_a() + Zeni::Vector2f(0.0f, -50.0f - 0.5f * fr.get_text_height()),
+					Zeni::get_Colors()["title_text"],
+					Zeni::ZENI_CENTER);
+
     Widget_Gamestate::render();
 
 	Zeni::Vector2f carImageSize(100.0f, 50.0f);

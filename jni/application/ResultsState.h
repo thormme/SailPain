@@ -9,7 +9,7 @@ class ResultsState : public Zeni::Widget_Gamestate {
 
 	std::vector<Player*> m_players;
 	std::vector<Sailplane::Stats> m_stats;
-	int m_winnerIndex;
+	std::vector<int> m_winnerIndex;
 
 	int m_finishPlace;
 
