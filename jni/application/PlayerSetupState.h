@@ -70,7 +70,7 @@ public:
 
 		public:
 		Play_Button()
-			: Text_Button(Zeni::Point2f(50.0f, 225.0f), Zeni::Point2f(450.0f, 275.0f),
+			: Text_Button(Zeni::Point2f(200.0f, 225.0f), Zeni::Point2f(600.0f, 275.0f),
 				"system_36_800x600", "Play") {
 		}
 

@@ -18,8 +18,14 @@ For each entry in Fonts:
 Only TrueType fonts are supported.
 -->
 <Fonts>
-  <system_36_x600>
+  <tiny>
     <filepath>fonts/FORGOTTE.TTF</filepath>
+    <height>20</height>
+    <bold>0</bold>
+    <italics>0</italics>
+  </tiny>
+  <system_36_x600>
+    <filepath>fonts/Lobster_1.3.ttf</filepath>
     <height>36</height>
     <bold>0</bold>
     <italics>0</italics>
@@ -28,7 +34,7 @@ Only TrueType fonts are supported.
     </virtual_screen>
   </system_36_x600>
   <system_36_500x600>
-    <filepath>fonts/FORGOTTE.TTF</filepath>
+    <filepath>fonts/Lobster_1.3.ttf</filepath>
     <height>36</height>
     <bold>0</bold>
     <italics>0</italics>
@@ -38,7 +44,7 @@ Only TrueType fonts are supported.
     </virtual_screen>
   </system_36_500x600>
   <system_36_800x600>
-    <filepath>fonts/FORGOTTE.TTF</filepath>
+    <filepath>fonts/Lobster_1.3.ttf</filepath>
     <height>36</height>
     <bold>0</bold>
     <italics>0</italics>
@@ -47,8 +53,18 @@ Only TrueType fonts are supported.
       <height>600</height>
     </virtual_screen>
   </system_36_800x600>
+  <system_26_800x600>
+    <filepath>fonts/Lobster_1.3.ttf</filepath>
+    <height>26</height>
+    <bold>0</bold>
+    <italics>0</italics>
+    <virtual_screen>
+      <width>800</width>
+      <height>600</height>
+    </virtual_screen>
+  </system_26_800x600>
   <title>
-    <filepath>fonts/FORGOTTE.TTF</filepath>
+    <filepath>fonts/Lobster_1.3.ttf</filepath>
     <height>92</height>
     <bold>0</bold>
     <italics>0</italics>
@@ -57,4 +73,14 @@ Only TrueType fonts are supported.
       <height>600</height>
     </virtual_screen>
   </title>
+  <silkscreen_normal>
+    <filepath>fonts/slkscr.ttf</filepath>
+    <height>48</height>
+    <bold>0</bold>
+    <italics>0</italics>
+    <virtual_screen>
+      <width>800</width>
+      <height>600</height>
+    </virtual_screen>
+  </silkscreen_normal>
 </Fonts>

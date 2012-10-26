@@ -57,6 +57,11 @@ The following things are unsupported:
     <filepath>textures/controller_diagram.png</filepath>
     <tile>0</tile>
   </controller_diagram>
+  <health>
+    <is_sprite>0</is_sprite>
+    <filepath>textures/health.png</filepath>
+    <tile>0</tile>
+  </health>
   <BUILDING.PNG>
     <is_sprite>0</is_sprite>
     <filepath>textures/building.png</filepath>

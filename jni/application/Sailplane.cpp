@@ -114,8 +114,6 @@ const double Sailplane::getTailYawCorrection() const {
 			angleOfAttack *= -1;
 		}
 	}
-	Utils::printDebugMessage(velocity.magnitude());
-	Utils::printDebugMessage("\n");
 	return angleOfAttack * velocity.magnitude()/100.0f;
 }
 
@@ -203,7 +201,6 @@ const StateModifications Sailplane::act(const std::vector<GameObject*> &collisio
 		}
 	}
 	if (m_boosting == true) {
-		Utils::printDebugMessage("yo\n");
 		setForce(getForce() + getForwardVector()*50000);
 		if (Time::getGameTime() - m_boostingTimer > 2.0) {
 			m_boosting = false;

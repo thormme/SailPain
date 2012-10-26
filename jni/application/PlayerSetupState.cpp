@@ -171,7 +171,7 @@ void PlayerSetupState::render() {
 	str << "Map Size";
 	
 	fr.render_text(Zeni::String(str.str()),
-		m_mapSize.get_end_point_a() + Zeni::Vector2f(150.0f, -50.0f - 0.5f * fr.get_text_height()),
+		m_mapSize.get_end_point_a() + Zeni::Vector2f(100.0f, -50.0f - 0.5f * fr.get_text_height()),
 					Zeni::get_Colors()["title_text"],
 					Zeni::ZENI_CENTER);
 
@@ -180,7 +180,7 @@ void PlayerSetupState::render() {
 	str << "Building Density";
 	
 	fr.render_text(Zeni::String(str.str()),
-		m_buildingDensitySlider.get_end_point_a() + Zeni::Vector2f(75.0f, -50.0f - 0.5f * fr.get_text_height()),
+		m_buildingDensitySlider.get_end_point_a() + Zeni::Vector2f(100.0f, -50.0f - 0.5f * fr.get_text_height()),
 					Zeni::get_Colors()["title_text"],
 					Zeni::ZENI_CENTER);
 
@@ -189,7 +189,7 @@ void PlayerSetupState::render() {
 	str << "Powerup Density";
 	
 	fr.render_text(Zeni::String(str.str()),
-		m_powerupDensitySlider.get_end_point_a() + Zeni::Vector2f(0.0f, -50.0f - 0.5f * fr.get_text_height()),
+		m_powerupDensitySlider.get_end_point_a() + Zeni::Vector2f(75.0f, -50.0f - 0.5f * fr.get_text_height()),
 					Zeni::get_Colors()["title_text"],
 					Zeni::ZENI_CENTER);
 
